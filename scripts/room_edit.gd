@@ -14,13 +14,17 @@ const LEDGE_COORDS : Array[Vector2i] = [
 	Vector2i(7, 6), Vector2i(8, 6)
 ]
 
+const CHUNK_SIZE := Vector2i(512, 512)
+
 var sources := []
 var should_redraw := false
 
 @export_tool_button("export to json") var export_v := export
 func export(project_path : String) -> void:
 	
-	var pdir := DirAccess.open(project_path + "/rooms")
+	DirAccess.make_dir_recursive_absolute(project_path + "rooms")
+	
+	var pdir := DirAccess.open(project_path + "rooms")
 	
 	for path : String in pdir.get_files():
 		pdir.remove(path)
@@ -38,14 +42,35 @@ func export(project_path : String) -> void:
 		"width" : room_rect.size.x,
 		"height" : room_rect.size.y,
 		"tiles" : [],
+		"chunks" : [],
 		"collisions" : [],
 		"ledges" : []
 	}
 	
 	var occupied : Dictionary[Vector2i, bool] = {}
 	
-	if name == "642":
-		print(used_rect)
+	var chunks : Array[Rect2] = []
+	
+	var size : Vector2i = room_rect.size
+	
+	while size.x > 0:
+		size.x -= CHUNK_SIZE.x
+		@warning_ignore("narrowing_conversion")
+		size.y = room_rect.size.y
+		
+		while size.y > 0:
+			size.y -= CHUNK_SIZE.y
+			
+			var chunk_pos := size.max(Vector2i.ZERO)
+			
+			chunks.append(Rect2(chunk_pos, size - chunk_pos + CHUNK_SIZE))
+			rd.chunks.append({
+				"x": chunk_pos.x,
+				"y": chunk_pos.y,
+				"width": size.x - chunk_pos.x + CHUNK_SIZE.x,
+				"height": size.y - chunk_pos.y + CHUNK_SIZE.y,
+				"tiles": []
+			})
 	
 	var y := used_rect.position.y + used_rect.size.y - 1
 	while y >= used_rect.position.y:
@@ -56,13 +81,18 @@ func export(project_path : String) -> void:
 			var atlas_coords := get_cell_atlas_coords(coords)
 			
 			if atlas_coords != Vector2i(-1, -1):
-				rd.tiles.append({
-					"x": x - used_rect.position.x,
-					"y": y - used_rect.position.y,
-					"atlas_x": atlas_coords.x,
-					"atlas_y": atlas_coords.y,
-					"source_id": get_cell_source_id(coords)
-				})
+				
+				# figuring out what chunk this tile is in
+				for i : int in chunks.size():
+					if chunks[i].has_point(Vector2(x, y)):
+						
+						rd.chunks[i].tiles.append({
+							"x": x - used_rect.position.x,
+							"y": y - used_rect.position.y,
+							"atlas_x": atlas_coords.x,
+							"atlas_y": atlas_coords.y,
+							"source_id": get_cell_source_id(coords)
+						})
 				
 				occupied[coords * 8] = true
 			

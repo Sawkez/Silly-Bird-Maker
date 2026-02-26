@@ -14,7 +14,8 @@ const LEDGE_COORDS : Array[Vector2i] = [
 	Vector2i(7, 6), Vector2i(8, 6)
 ]
 
-const CHUNK_SIZE := Vector2i(512, 512)
+const CHUNK_TEXTURE_SIZE := Vector2i(256, 256)
+const CHUNK_SIZE := CHUNK_TEXTURE_SIZE - Vector2i(8, 8) # allow 1 tile for layering
 
 var sources := []
 var should_redraw := false
@@ -44,7 +45,8 @@ func export(project_path : String) -> void:
 		"tiles" : [],
 		"chunks" : [],
 		"collisions" : [],
-		"ledges" : []
+		"ledges" : [],
+		"neighbors" : []
 	}
 	
 	var occupied : Dictionary[Vector2i, bool] = {}
@@ -67,8 +69,8 @@ func export(project_path : String) -> void:
 			rd.chunks.append({
 				"x": chunk_pos.x,
 				"y": chunk_pos.y,
-				"width": size.x - chunk_pos.x + CHUNK_SIZE.x,
-				"height": size.y - chunk_pos.y + CHUNK_SIZE.y,
+				"width": size.x - chunk_pos.x + CHUNK_TEXTURE_SIZE.x,
+				"height": size.y - chunk_pos.y + CHUNK_TEXTURE_SIZE.y,
 				"tiles": []
 			})
 	
@@ -84,7 +86,7 @@ func export(project_path : String) -> void:
 				
 				# figuring out what chunk this tile is in
 				for i : int in chunks.size():
-					if chunks[i].has_point(Vector2(x, y)):
+					if chunks[i].has_point(Vector2((x - used_rect.position.x) * 8, (y - used_rect.position.y) * 8)):
 						
 						rd.chunks[i].tiles.append({
 							"x": x - used_rect.position.x,
@@ -110,6 +112,21 @@ func export(project_path : String) -> void:
 		y -= 1
 	
 	rd.collisions = optimize_collisions(occupied)
+	
+	for room : RoomEdit in get_parent().get_children():
+		if room == self: continue
+		
+		var neighbor_rect := room.get_room_rect()
+		if room_rect.intersects(neighbor_rect, true):
+			rd.neighbors.append({
+				"x": neighbor_rect.position.x,
+				"y": neighbor_rect.position.y,
+				"width": neighbor_rect.size.x,
+				"height": neighbor_rect.size.y,
+				"index": room.get_index()
+			})
+	
+	if name == "0": print(rd)
 	
 	var json := JSON.stringify(rd)
 	var f := FileAccess.open("%s/rooms/%s.json" % [project_path, get_index()], FileAccess.WRITE)

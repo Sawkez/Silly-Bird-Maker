@@ -23,9 +23,9 @@ var should_redraw := false
 @export_tool_button("export to json") var export_v := export
 func export(project_path : String) -> void:
 	
-	DirAccess.make_dir_recursive_absolute(project_path + "rooms")
+	DirAccess.make_dir_recursive_absolute(project_path + "rooms/%s" % get_index())
 	
-	var pdir := DirAccess.open(project_path + "rooms")
+	var pdir := DirAccess.open(project_path + "rooms/%s" % get_index())
 	
 	for path : String in pdir.get_files():
 		pdir.remove(path)
@@ -42,7 +42,6 @@ func export(project_path : String) -> void:
 		"position_y" : room_rect.position.y,
 		"width" : room_rect.size.x,
 		"height" : room_rect.size.y,
-		"tiles" : [],
 		"chunks" : [],
 		"collisions" : [],
 		"ledges" : [],
@@ -71,8 +70,12 @@ func export(project_path : String) -> void:
 				"y": chunk_pos.y,
 				"width": size.x - chunk_pos.x + CHUNK_TEXTURE_SIZE.x,
 				"height": size.y - chunk_pos.y + CHUNK_TEXTURE_SIZE.y,
-				"tiles": []
 			})
+	
+	var chunk_files : Array[FileAccess] = []
+	
+	for i : int in chunks.size():
+		chunk_files.append(FileAccess.open(project_path + "rooms/%s/%s.chunk" % [get_index(), i], FileAccess.WRITE))
 	
 	var y := used_rect.position.y + used_rect.size.y - 1
 	while y >= used_rect.position.y:
@@ -88,13 +91,11 @@ func export(project_path : String) -> void:
 				for i : int in chunks.size():
 					if chunks[i].has_point(Vector2((x - used_rect.position.x) * 8, (y - used_rect.position.y) * 8)):
 						
-						rd.chunks[i].tiles.append({
-							"x": x - used_rect.position.x,
-							"y": y - used_rect.position.y,
-							"atlas_x": atlas_coords.x,
-							"atlas_y": atlas_coords.y,
-							"source_id": get_cell_source_id(coords)
-						})
+						chunk_files[i].store_32(x - used_rect.position.x)
+						chunk_files[i].store_32(y - used_rect.position.y)
+						chunk_files[i].store_16(atlas_coords.x)
+						chunk_files[i].store_16(atlas_coords.y)
+						chunk_files[i].store_16(get_cell_source_id(coords))
 				
 				occupied[coords * 8] = true
 			
@@ -126,13 +127,14 @@ func export(project_path : String) -> void:
 				"index": room.get_index()
 			})
 	
-	if name == "0": print(rd)
-	
 	var json := JSON.stringify(rd)
-	var f := FileAccess.open("%s/rooms/%s.json" % [project_path, get_index()], FileAccess.WRITE)
+	var f := FileAccess.open("%s/rooms/%s/room.json" % [project_path, get_index()], FileAccess.WRITE)
 	
 	f.store_string(json)
 	f.close()
+	
+	for file : FileAccess in chunk_files:
+		file.close()
 
 func optimize_collisions(occupied: Dictionary) -> Array:
 	

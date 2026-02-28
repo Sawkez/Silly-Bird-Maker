@@ -91,8 +91,8 @@ func export(project_path : String) -> void:
 				for i : int in chunks.size():
 					if chunks[i].has_point(Vector2((x - used_rect.position.x) * 8, (y - used_rect.position.y) * 8)):
 						
-						chunk_files[i].store_32(x - used_rect.position.x)
-						chunk_files[i].store_32(y - used_rect.position.y)
+						chunk_files[i].store_16(x - used_rect.position.x)
+						chunk_files[i].store_16(y - used_rect.position.y)
 						chunk_files[i].store_16(atlas_coords.x)
 						chunk_files[i].store_16(atlas_coords.y)
 						chunk_files[i].store_16(get_cell_source_id(coords))

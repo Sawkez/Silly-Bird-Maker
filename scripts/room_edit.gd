@@ -70,6 +70,7 @@ func export(project_path : String) -> void:
 				"y": chunk_pos.y,
 				"width": size.x - chunk_pos.x + CHUNK_TEXTURE_SIZE.x,
 				"height": size.y - chunk_pos.y + CHUNK_TEXTURE_SIZE.y,
+				"tile_count": 0
 			})
 	
 	var chunk_files : Array[FileAccess] = []
@@ -96,6 +97,9 @@ func export(project_path : String) -> void:
 						chunk_files[i].store_16(atlas_coords.x)
 						chunk_files[i].store_16(atlas_coords.y)
 						chunk_files[i].store_16(get_cell_source_id(coords))
+						
+						rd.chunks[i].tile_count += 1
+						break
 				
 				occupied[coords * 8] = true
 			

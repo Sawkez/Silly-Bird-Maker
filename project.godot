@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Silly Bird Maker"
-run/main_scene="uid://xypeum6426fn"
+run/main_scene="uid://f8yqywyp03cx"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 

@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://f8yqywyp03cx"]
+
+[ext_resource type="Script" uid="uid://8oxv8xmq6awf" path="res://scripts/main_menu.gd" id="1_l6cm7"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_l6cm7")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Project" type="Button" parent="CenterContainer"]
+layout_mode = 2
+text = "select_project"
+
+[node name="ProjectDirectorySelection" type="FileDialog" parent="."]
+title = "Open Project Directory"
+dialog_hide_on_ok = true
+file_mode = 2
+access = 2
+
+[connection signal="pressed" from="CenterContainer/Project" to="ProjectDirectorySelection" method="show"]
+[connection signal="dir_selected" from="ProjectDirectorySelection" to="." method="_on_project_directory_selection_dir_selected"]

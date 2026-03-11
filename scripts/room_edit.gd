@@ -14,11 +14,54 @@ const LEDGE_COORDS : Array[Vector2i] = [
 	Vector2i(7, 6), Vector2i(8, 6)
 ]
 
+const ROOM_JSON_FILENAME = "room.json"
+
 const CHUNK_TEXTURE_SIZE := Vector2i(256, 256)
 const CHUNK_SIZE := CHUNK_TEXTURE_SIZE - Vector2i(8, 8) # allow 1 tile for layering
 
 var sources := []
 var should_redraw := false
+
+func _init(tileset : TileSet, roomDirPath : String) -> void:
+	var json_path := roomDirPath + "/" + ROOM_JSON_FILENAME
+	tile_set = tileset
+	print(json_path)
+	if not FileAccess.file_exists(json_path):
+		queue_free()
+		return
+	
+	var json := JSON.new()
+	json.parse(FileAccess.get_file_as_string(json_path))
+	var room_properties : Dictionary = json.data
+	print(room_properties)
+	
+	position.x = room_properties.position_x
+	position.y = room_properties.position_y
+	target_width = room_properties.target_width
+	target_height = room_properties.target_height
+	
+	for chunk : int in room_properties.chunks.size():
+		var chunk_path = roomDirPath + "/%s.chunk" % chunk
+		var tile_file := FileAccess.open(chunk_path, FileAccess.READ)
+		
+		for tile : int in room_properties.chunks[chunk].tile_count:
+			var tile_pos : Vector2i
+			@warning_ignore("integer_division")
+			tile_pos.x = tile_file.get_16()
+			@warning_ignore("integer_division")
+			tile_pos.y = tile_file.get_16()
+			
+			var atlas_pos : Vector2i
+			atlas_pos.x = tile_file.get_16()
+			atlas_pos.y = tile_file.get_16()
+			
+			var source_id : int = tile_file.get_16()
+			
+			set_cell(tile_pos, source_id, atlas_pos)
+		
+		tile_file.close()
+	
+	#notify_runtime_tile_data_update()
 
 @export_tool_button("export to json") var export_v := export
 func export(project_path : String) -> void:

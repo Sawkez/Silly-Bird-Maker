@@ -1,4 +1,3 @@
-@tool
 extends TileMapLayer
 class_name RoomEdit
 
@@ -14,6 +13,8 @@ const LEDGE_COORDS : Array[Vector2i] = [
 	Vector2i(7, 6), Vector2i(8, 6)
 ]
 
+const DRAG_SCENE := preload("res://scenes/level_edit/drag.tscn")
+
 const ROOM_JSON_FILENAME = "room.json"
 
 const CHUNK_TEXTURE_SIZE := Vector2i(256, 256)
@@ -22,18 +23,19 @@ const CHUNK_SIZE := CHUNK_TEXTURE_SIZE - Vector2i(8, 8) # allow 1 tile for layer
 var sources := []
 var should_redraw := false
 
-func _init(tileset : TileSet, roomDirPath : String) -> void:
-	var json_path := roomDirPath + "/" + ROOM_JSON_FILENAME
+func _init(tileset : TileSet, room_dir_path : String, assume_empty : bool = false) -> void:
+	add_child(DRAG_SCENE.instantiate())
+	add_child(SpikeMap.new())
+	
+	var json_path := room_dir_path + "/" + ROOM_JSON_FILENAME
 	tile_set = tileset
-	print(json_path)
-	if not FileAccess.file_exists(json_path):
-		queue_free()
+	if not FileAccess.file_exists(json_path) or assume_empty:
+		# queue_free()
 		return
 	
 	var json := JSON.new()
 	json.parse(FileAccess.get_file_as_string(json_path))
 	var room_properties : Dictionary = json.data
-	print(room_properties)
 	
 	position.x = room_properties.position_x
 	position.y = room_properties.position_y
@@ -41,7 +43,7 @@ func _init(tileset : TileSet, roomDirPath : String) -> void:
 	target_height = room_properties.target_height
 	
 	for chunk : int in room_properties.chunks.size():
-		var chunk_path = roomDirPath + "/%s.chunk" % chunk
+		var chunk_path = room_dir_path + "/%s.chunk" % chunk
 		var tile_file := FileAccess.open(chunk_path, FileAccess.READ)
 		
 		for tile : int in room_properties.chunks[chunk].tile_count:
@@ -63,12 +65,20 @@ func _init(tileset : TileSet, roomDirPath : String) -> void:
 	
 	#notify_runtime_tile_data_update()
 
-@export_tool_button("export to json") var export_v := export
+func _ready() -> void:
+	tiles_changed()
+
+static func make_empty(tileset : TileSet, roomDirPath : String, pos : Vector2) -> RoomEdit:
+	var room := RoomEdit.new(tileset, roomDirPath, true)
+	room.position = pos
+	return room
+
+# @export_tool_button("export to json") var export_v := export
 func export(project_path : String) -> void:
 	
-	DirAccess.make_dir_recursive_absolute(project_path + "rooms/%s" % get_index())
+	DirAccess.make_dir_recursive_absolute(project_path + "/rooms/%s" % get_index())
 	
-	var pdir := DirAccess.open(project_path + "rooms/%s" % get_index())
+	var pdir := DirAccess.open(project_path + "/rooms/%s" % get_index())
 	
 	for path : String in pdir.get_files():
 		pdir.remove(path)
@@ -119,7 +129,7 @@ func export(project_path : String) -> void:
 	var chunk_files : Array[FileAccess] = []
 	
 	for i : int in chunks.size():
-		chunk_files.append(FileAccess.open(project_path + "rooms/%s/%s.chunk" % [get_index(), i], FileAccess.WRITE))
+		chunk_files.append(FileAccess.open(project_path + "/rooms/%s/%s.chunk" % [get_index(), i], FileAccess.WRITE))
 	
 	var y := used_rect.position.y + used_rect.size.y - 1
 	while y >= used_rect.position.y:
@@ -148,8 +158,8 @@ func export(project_path : String) -> void:
 			
 			if atlas_coords in LEDGE_COORDS:
 				rd.ledges.append({
-					"x": x * 8 + global_position.x,
-					"y": y * 8 + global_position.y
+					"x": int(x * 8 + global_position.x),
+					"y": int(y * 8 + global_position.y)
 				})
 			
 			#var data := get_cell_tile_data(coords)
@@ -237,9 +247,6 @@ func get_room_rect() -> Rect2:
 	
 	return room_rect
 
-func _on_changed() -> void:
-	should_redraw = true
-
 func _process(_d) -> void:
 	if should_redraw:
 		should_redraw = false
@@ -258,3 +265,32 @@ func _draw() -> void:
 	
 	draw_rect(view, Color.YELLOW, false, 3)
 	draw_rect(room, Color.BLUE, false, 3)
+
+func place_tile(pos : Vector2, source : int) -> void:
+	var map_pos : Vector2i = local_to_map(to_local(pos))
+	
+	set_cell(map_pos, source - 1)
+	set_cells_terrain_connect([map_pos], 0, source - 1)
+	
+	tiles_changed()
+
+func erase_tile(pos : Vector2) -> void:
+	
+	var map_pos : Vector2i = local_to_map(to_local(pos))
+	
+	set_cell(map_pos)
+	set_cells_terrain_connect([map_pos], 0, -1)
+	
+	tiles_changed()
+
+func tiles_changed() -> void:
+	should_redraw = true
+	var drag_rect := get_room_rect()
+	drag_rect.position -= global_position
+	get_child(0).set_rect(drag_rect)
+
+func room_selected(room : int) -> void:
+	if get_index() == room:
+		modulate.a = 1.0
+	else:
+		modulate.a = 0.25

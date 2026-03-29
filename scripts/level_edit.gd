@@ -1,6 +1,7 @@
-@tool
 extends Node2D
 class_name LevelEdit
+
+const TILE_SET_BUTTON_SCENE := preload("res://scenes/level_edit/tile_set.tscn")
 
 const VALID_TERRAIN_PEERING_BITS : PackedInt32Array = [0, 3, 4, 7, 8, 11, 12, 15]
 
@@ -17,6 +18,8 @@ const TEMPLATE_SHORT : int = 1
 var sources : Array[Dictionary]
 var tile_set : TileSet
 
+var dragged_node : Drag = null
+
 func _ready() -> void:
 	import_tilesheets()
 	
@@ -32,9 +35,15 @@ func _ready() -> void:
 	$PlayerSpawn.global_position.y = properties.player_y
 	
 	for i : int in properties.room_count:
-		$Rooms.add_child(RoomEdit.new(tile_set, Global.project_path + "/rooms/%s" % i))
+		var new_room := RoomEdit.new(tile_set, Global.project_path + "/rooms/%s" % i)
+		$Rooms.add_child(new_room)
+		%Viewport.room_selected.connect(new_room.room_selected)
+	
+	%Viewport.room_selected.emit(0)
+	
+	Global.level_edit = self
 
-@export_tool_button("Import tilesheets") var dbg_import_tilesheets : Callable = import_tilesheets
+# @export_tool_button("Import tilesheets") var dbg_import_tilesheets : Callable = import_tilesheets
 func import_tilesheets() -> void:
 	
 	tile_set = load("res://resources/tileset_templates.tres").duplicate()
@@ -52,14 +61,18 @@ func import_tilesheets() -> void:
 	]
 	
 	var id := TEMPLATE_SHORT + 1
-	for path : String in DirAccess.get_files_at(DEFAULT_TILESHEETS):
+	for path : String in ["grass.png"]:
 		if not path.ends_with(".png"): continue
 		
-		add_source(load(DEFAULT_TILESHEETS + path), id)
+		var tex : Texture2D = load(DEFAULT_TILESHEETS + path)
+		
+		add_source(tex, id)
 		sources.append({
 			"custom" : false,
 			"name" : path
 		})
+		
+		add_tile_button(tex, path, id)
 		
 		id += 1
 	
@@ -75,6 +88,8 @@ func import_tilesheets() -> void:
 			"custom" : true,
 			"name" : path
 		})
+		
+		add_tile_button(sheet, path, id)
 		
 		id += 1
 
@@ -116,7 +131,18 @@ func add_source(sheet : Texture2D, id : int) -> void:
 			
 			#_tile_data_runtime_update(coords, data)
 
-@export_tool_button("Export level") var dbg_export : Callable = export
+func add_tile_button(texture : Texture2D, path : String, id : int) -> void:
+	var new_tile_set_button : Button = TILE_SET_BUTTON_SCENE.instantiate()
+	new_tile_set_button.icon = new_tile_set_button.icon.duplicate()
+	new_tile_set_button.icon.atlas = texture
+	var path_split := path.split("/")
+	new_tile_set_button.text = path_split[path_split.size() - 1]
+	new_tile_set_button.source = id
+	new_tile_set_button.pressed.connect(%Viewport.set_source.bind(new_tile_set_button))
+	
+	%FGTileSelection.add_child(new_tile_set_button)
+
+# @export_tool_button("Export level") var dbg_export : Callable = export
 func export() -> void:
 	
 	DirAccess.make_dir_recursive_absolute(Global.project_path)
@@ -143,3 +169,8 @@ func export() -> void:
 	
 	for child : RoomEdit in $Rooms.get_children():
 		child.export(Global.project_path)
+
+static func snap_to_grid(pos : Vector2) -> Vector2:
+	for i : int in 2:
+		pos[i] = roundf(pos[i] / 8.0) * 8.0
+	return pos

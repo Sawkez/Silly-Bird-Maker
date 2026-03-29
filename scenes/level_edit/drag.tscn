@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://3ehw674ejvis"]
+
+[ext_resource type="Script" uid="uid://dr8xjicmsi15m" path="res://scripts/level_edit/drag.gd" id="1_3io4p"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ofet5"]
+
+[node name="Drag" type="Area2D"]
+script = ExtResource("1_3io4p")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_ofet5")

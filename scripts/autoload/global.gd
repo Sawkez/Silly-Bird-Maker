@@ -1,4 +1,3 @@
-@tool
 extends Node
 
 var project_path := "/home/sokz/projects/test-sbmaker-project/"

@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://c3ykt711x0ldy"]
+
+[node name="RoomProperties" type="VBoxContainer" unique_id=322758847]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="title" type="Label" parent="." unique_id=617936971]
+layout_mode = 2
+text = "room_properties"
+
+[node name="ViewWidthLabel" type="Label" parent="." unique_id=1572788192]
+layout_mode = 2
+text = "preferred_view_width"
+
+[node name="ViewWidth" type="SpinBox" parent="." unique_id=579284872]
+layout_mode = 2
+min_value = 120.0
+max_value = 1024.0
+value = 120.0
+
+[node name="ViewHeightLabel" type="Label" parent="." unique_id=1746788767]
+layout_mode = 2
+text = "preferred_view_height"
+
+[node name="ViewHeight" type="SpinBox" parent="." unique_id=336248825]
+layout_mode = 2
+min_value = 68.0
+max_value = 1024.0
+value = 100.0
+
+[node name="CheckpointCountLabel" type="Label" parent="." unique_id=1900872912]
+layout_mode = 2
+text = "checkpoint_count"
+
+[node name="CheckpointCount" type="SpinBox" parent="." unique_id=1158026552]
+layout_mode = 2
+min_value = 1.0
+value = 1.0

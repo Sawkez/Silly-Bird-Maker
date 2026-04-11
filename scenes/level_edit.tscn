@@ -43,9 +43,11 @@ editor_draw_screen = false
 [node name="PlayerSpawn" type="Sprite2D" parent="." unique_id=207224668]
 position = Vector2(16, 16)
 texture = ExtResource("6_0ona1")
+offset = Vector2(0, -8)
 
 [node name="Drag" parent="PlayerSpawn" unique_id=684247230 instance=ExtResource("3_2dtcn")]
-drag_priority = 1
+position = Vector2(0, -8)
+drag_priority = 2
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=652008879]
 
@@ -81,28 +83,9 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="LeftPanel" type="PanelContainer" parent="UI/Control/VBoxContainer/HBoxContainer" unique_id=300169910]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel" unique_id=340032984]
-layout_mode = 2
-
-[node name="RoomPropertiesLabel" type="Label" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer" unique_id=1055044662]
-layout_mode = 2
-text = "room 0"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer" unique_id=1012564056]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer/ScrollContainer" unique_id=580612443]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Label" type="Label" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer/ScrollContainer/VBoxContainer" unique_id=253154431]
-layout_mode = 2
-text = "pooperty"
 
 [node name="Viewport" type="Control" parent="UI/Control/VBoxContainer/HBoxContainer" unique_id=361017403]
 unique_name_in_owner = true

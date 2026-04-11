@@ -22,6 +22,12 @@ func _input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> vo
 		dragged = true
 		Global.level_edit.dragged_node = self
 		drag_offset = -get_local_mouse_position()
+		
+		var properties = get_parent().get("properties")
+		if properties != null:
+			var left_panel := Global.level_edit.get_node("%LeftPanel")
+			for child : Node in left_panel.get_children(): left_panel.remove_child(child)
+			left_panel.add_child(properties)
 
 func _input(event : InputEvent) -> void:
 	if event.is_action("drag") and not event.is_pressed() and dragged:

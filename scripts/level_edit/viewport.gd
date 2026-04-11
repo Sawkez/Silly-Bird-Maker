@@ -11,10 +11,21 @@ var current_room : int = -1:
 		room_selected.emit(v)
 var current_source : TileSetButton = null
 
+func _ready() -> void:
+	current_room = -1
+
 func _gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion and Input.is_action_pressed("pan"):
+	if event is InputEventMouseMotion:
+		if Input.is_action_pressed("pan"):
+			%Camera2D.position -= event.screen_relative / %Camera2D.zoom
 		
-		%Camera2D.position -= event.screen_relative / %Camera2D.zoom
+		elif Input.is_action_pressed("drag"): pass
+		
+		elif Input.is_action_pressed("paint"):
+			current_source.paint.call(%Rooms.get_child(current_room), %Camera2D.get_global_mouse_position())
+		
+		elif Input.is_action_pressed("erase"):
+			current_source.erase.call(%Rooms.get_child(current_room), %Camera2D.get_global_mouse_position())
 	
 	elif not event.is_pressed(): return
 	

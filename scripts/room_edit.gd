@@ -14,6 +14,8 @@ const LEDGE_COORDS : Array[Vector2i] = [
 ]
 
 const DRAG_SCENE := preload("res://scenes/level_edit/drag.tscn")
+const PROPERTIES_SCENE := preload("res://scenes/level_edit/room_properties.tscn")
+const CHECKPOINT_SCENE := preload("res://scenes/level_edit/checkpoint.tscn")
 
 const ROOM_JSON_FILENAME = "room.json"
 
@@ -25,6 +27,8 @@ var should_redraw := false
 
 var drag : Drag
 var spikemap : SpikeMap
+var properties : Control
+var checkpoints : Node2D
 
 var dbg_chunks : Array[Rect2] = []
 
@@ -32,10 +36,20 @@ func _init(tileset : TileSet, room_dir_path : String, assume_empty : bool = fals
 	drag = DRAG_SCENE.instantiate()
 	add_child(drag)
 	
+	properties = PROPERTIES_SCENE.instantiate()
+	properties.get_node("ViewWidth").value_changed.connect(view_width_changed)
+	properties.get_node("ViewHeight").value_changed.connect(view_height_changed)
+	properties.get_node("CheckpointCount").value_changed.connect(checkpoint_count_changed)
+	
+	checkpoints = Node2D.new()
+	add_child(checkpoints)
+	
 	var json_path := room_dir_path + "/" + ROOM_JSON_FILENAME
 	tile_set = tileset
 	if not FileAccess.file_exists(json_path) or assume_empty:
 		# queue_free()
+		spikemap = SpikeMap.new()
+		add_child(spikemap)
 		return
 	
 	var json := JSON.new()
@@ -46,6 +60,9 @@ func _init(tileset : TileSet, room_dir_path : String, assume_empty : bool = fals
 	position.y = room_properties.position_y
 	target_width = room_properties.target_width
 	target_height = room_properties.target_height
+	
+	properties.get_node("ViewWidth").value = room_properties.target_width
+	properties.get_node("ViewHeight").value = room_properties.target_height
 	
 	for chunk : int in room_properties.chunks.size():
 		var chunk_path = room_dir_path + "/%s.chunk" % chunk
@@ -67,6 +84,11 @@ func _init(tileset : TileSet, room_dir_path : String, assume_empty : bool = fals
 			set_cell(tile_pos, source_id, atlas_pos)
 		
 		tile_file.close()
+	
+	for checkpoint : Dictionary in room_properties.checkpoints:
+		var new_checkpoint := CHECKPOINT_SCENE.instantiate()
+		new_checkpoint.set_deferred("global_position", Vector2(checkpoint.x, checkpoint.y))
+		checkpoints.add_child(new_checkpoint)
 	
 	spikemap = SpikeMap.new("%s/spikes.ow" % room_dir_path, position, room_properties.spike_count)
 	add_child(spikemap)
@@ -106,7 +128,8 @@ func export(project_path : String) -> void:
 		"chunks" : [],
 		"collisions" : [],
 		"ledges" : [],
-		"neighbors" : []
+		"neighbors" : [],
+		"checkpoints": []
 	}
 	
 	var occupied : Dictionary[Vector2i, bool] = {}
@@ -205,6 +228,12 @@ func export(project_path : String) -> void:
 	var spike_count := spikemap.export_colliders("%s/rooms/%s/spikes.ow" % [project_path, get_index()], position)
 	rd.spike_count = spike_count
 	
+	for checkpoint : Node2D in checkpoints.get_children():
+		rd.checkpoints.append({
+			"x" : checkpoint.global_position.x,
+			"y" : checkpoint.global_position.y
+			})
+	
 	var json := JSON.stringify(rd)
 	var f := FileAccess.open("%s/rooms/%s/room.json" % [project_path, get_index()], FileAccess.WRITE)
 	
@@ -245,9 +274,25 @@ func optimize_collisions(occupied: Dictionary) -> Array:
 			for x in range(0, width, 8):
 				occupied.erase(start + Vector2i(x, y))
 		
+		start += Vector2i(position)
+		
+		if is_equal_approx(start.x, get_room_rect().position.x):
+			start.x -= 16
+			width += 16
+		
+		if is_equal_approx(start.y, get_room_rect().position.y):
+			start.y -= 16
+			height += 16
+		
+		if is_equal_approx(start.x + width, get_room_rect().end.x):
+			width += 16
+		
+		if is_equal_approx(start.y + height, get_room_rect().end.y):
+			height += 16
+		
 		result.append({
-			"x": start.x + position.x,
-			"y": start.y + position.y,
+			"x": start.x,
+			"y": start.y,
 			"width": width,
 			"height": height
 		})
@@ -294,7 +339,6 @@ func place_tile(pos : Vector2, source : int) -> void:
 	
 	set_cell(map_pos, source - 1)
 	set_cells_terrain_connect([map_pos], 0, source - 1)
-	print("OOGA BOOGA!")
 	
 	tiles_changed()
 
@@ -311,10 +355,26 @@ func tiles_changed() -> void:
 	should_redraw = true
 	var drag_rect := get_room_rect()
 	drag_rect.position -= global_position
-	get_child(0).set_rect(drag_rect)
+	drag.set_rect(drag_rect)
 
 func room_selected(room : int) -> void:
 	if get_index() == room:
 		modulate.a = 1.0
 	else:
 		modulate.a = 0.25
+
+func view_width_changed(value : int) -> void:
+	target_width = value
+	should_redraw = true
+
+func view_height_changed(value : int) -> void:
+	target_height = value
+	should_redraw = true
+
+func checkpoint_count_changed(value : int) -> void:
+	while checkpoints.get_child_count() > value:
+		checkpoints.get_child(0).queue_free()
+	
+	while checkpoints.get_child_count() < value:
+		checkpoints.add_child(CHECKPOINT_SCENE.instantiate())
+	

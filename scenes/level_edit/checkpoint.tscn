@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://cnwkldfnk4g28"]
+
+[ext_resource type="Texture2D" uid="uid://cfxvl7ratr3x5" path="res://graphics/icons/player.png" id="1_g6otm"]
+[ext_resource type="PackedScene" uid="uid://3ehw674ejvis" path="res://scenes/level_edit/drag.tscn" id="2_xthcb"]
+
+[node name="Checkpoint" type="Sprite2D" unique_id=1317117955]
+modulate = Color(1, 1, 1, 0.34901962)
+texture_filter = 1
+texture = ExtResource("1_g6otm")
+offset = Vector2(0, -8)
+
+[node name="Drag" parent="." unique_id=392778532 instance=ExtResource("2_xthcb")]
+position = Vector2(0, -8)
+drag_priority = 1

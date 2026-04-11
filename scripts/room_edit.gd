@@ -23,9 +23,14 @@ const CHUNK_SIZE := CHUNK_TEXTURE_SIZE - Vector2i(8, 8) # allow 1 tile for layer
 var sources := []
 var should_redraw := false
 
+var drag : Drag
+var spikemap : SpikeMap
+
+var dbg_chunks : Array[Rect2] = []
+
 func _init(tileset : TileSet, room_dir_path : String, assume_empty : bool = false) -> void:
-	add_child(DRAG_SCENE.instantiate())
-	add_child(SpikeMap.new())
+	drag = DRAG_SCENE.instantiate()
+	add_child(drag)
 	
 	var json_path := room_dir_path + "/" + ROOM_JSON_FILENAME
 	tile_set = tileset
@@ -62,6 +67,9 @@ func _init(tileset : TileSet, room_dir_path : String, assume_empty : bool = fals
 			set_cell(tile_pos, source_id, atlas_pos)
 		
 		tile_file.close()
+	
+	spikemap = SpikeMap.new("%s/spikes.ow" % room_dir_path, position, room_properties.spike_count)
+	add_child(spikemap)
 	
 	#notify_runtime_tile_data_update()
 
@@ -151,6 +159,8 @@ func export(project_path : String) -> void:
 						chunk_files[i].store_16(atlas_coords.y)
 						chunk_files[i].store_16(get_cell_source_id(coords))
 						
+						print(i, " ", get_cell_source_id(coords))
+						
 						rd.chunks[i].tile_count += 1
 						break
 				
@@ -184,14 +194,24 @@ func export(project_path : String) -> void:
 				"index": room.get_index()
 			})
 	
+	for file : FileAccess in chunk_files:
+		file.close()
+	
+	var chunk_spike_counts := spikemap.export(chunks, project_path + "/rooms/%s" % get_index())
+	
+	for chunk : int in chunk_spike_counts.size():
+		rd.chunks[chunk].spike_count = chunk_spike_counts[chunk]
+	
+	var spike_count := spikemap.export_colliders("%s/rooms/%s/spikes.ow" % [project_path, get_index()], position)
+	rd.spike_count = spike_count
+	
 	var json := JSON.stringify(rd)
 	var f := FileAccess.open("%s/rooms/%s/room.json" % [project_path, get_index()], FileAccess.WRITE)
 	
 	f.store_string(json)
 	f.close()
 	
-	for file : FileAccess in chunk_files:
-		file.close()
+	dbg_chunks = chunks
 
 func optimize_collisions(occupied: Dictionary) -> Array:
 	
@@ -263,6 +283,9 @@ func _draw() -> void:
 		target_height
 	)
 	
+	for chunk : Rect2 in dbg_chunks:
+		draw_rect(chunk, Color.RED, false, 3)
+	
 	draw_rect(view, Color.YELLOW, false, 3)
 	draw_rect(room, Color.BLUE, false, 3)
 
@@ -271,6 +294,7 @@ func place_tile(pos : Vector2, source : int) -> void:
 	
 	set_cell(map_pos, source - 1)
 	set_cells_terrain_connect([map_pos], 0, source - 1)
+	print("OOGA BOOGA!")
 	
 	tiles_changed()
 

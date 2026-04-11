@@ -21,6 +21,8 @@ var tile_set : TileSet
 var dragged_node : Drag = null
 
 func _ready() -> void:
+	Global.level_edit = self
+	
 	import_tilesheets()
 	
 	var level_properties_path := Global.project_path + "/" + PROPERTIES_FILENAME
@@ -40,8 +42,6 @@ func _ready() -> void:
 		%Viewport.room_selected.connect(new_room.room_selected)
 	
 	%Viewport.room_selected.emit(0)
-	
-	Global.level_edit = self
 
 # @export_tool_button("Import tilesheets") var dbg_import_tilesheets : Callable = import_tilesheets
 func import_tilesheets() -> void:
@@ -60,7 +60,7 @@ func import_tilesheets() -> void:
 		}
 	]
 	
-	var id := TEMPLATE_SHORT + 1
+	var id := sources.size()
 	for path : String in ["grass.png"]:
 		if not path.ends_with(".png"): continue
 		
@@ -69,12 +69,14 @@ func import_tilesheets() -> void:
 		add_source(tex, id)
 		sources.append({
 			"custom" : false,
-			"name" : path
+			"name" : path,
 		})
 		
 		add_tile_button(tex, path, id)
 		
 		id += 1
+	
+	if not DirAccess.dir_exists_absolute(Global.project_path + "/" + PROJECT_TILESHEETS): return
 	
 	for path : String in DirAccess.get_files_at(Global.project_path + "/" + PROJECT_TILESHEETS):
 		if not path.ends_with(".png"): continue
@@ -86,7 +88,7 @@ func import_tilesheets() -> void:
 		
 		sources.append({
 			"custom" : true,
-			"name" : path
+			"name" : path,
 		})
 		
 		add_tile_button(sheet, path, id)
@@ -94,6 +96,7 @@ func import_tilesheets() -> void:
 		id += 1
 
 func add_source(sheet : Texture2D, id : int) -> void:
+	print(id)
 	var template := 0
 	if sheet.get_size() == FULL_SHEET_SIZE: template = TEMPLATE_FULL
 	elif sheet.get_size() == SHORT_SHEET_SIZE: template = TEMPLATE_SHORT

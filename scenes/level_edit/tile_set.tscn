@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://sxdaucp66ecp"]
+[gd_scene format=3 uid="uid://sxdaucp66ecp"]
 
 [ext_resource type="Texture2D" uid="uid://b51wrtl8c2ecx" path="res://graphics/tiles/fg/grass.png" id="1_vsngi"]
 [ext_resource type="Script" uid="uid://cnut2cbteepg6" path="res://scripts/level_edit/tile_set.gd" id="2_8644s"]
@@ -7,7 +7,7 @@
 atlas = ExtResource("1_vsngi")
 region = Rect2(0, 42, 11, 11)
 
-[node name="Button" type="Button"]
+[node name="Button" type="Button" unique_id=647361300]
 texture_filter = 1
 custom_minimum_size = Vector2(150, 50)
 offset_right = 113.0

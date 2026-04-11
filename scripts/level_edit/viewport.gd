@@ -5,7 +5,7 @@ signal room_selected(room : int)
 const ZOOM_SPEED : float = 0.25
 
 @onready var level_edit : LevelEdit = get_node("/root/LevelEdit")
-var current_room : int = 0:
+var current_room : int = -1:
 	set(v):
 		current_room = v
 		room_selected.emit(v)
@@ -43,9 +43,11 @@ func _gui_input(event: InputEvent) -> void:
 			RoomEdit.make_empty(
 				level_edit.tile_set, 
 				Global.project_path + "/rooms/%s" % %Rooms.get_child_count(), 
-				%Camera2D.get_global_mouse_position()
+				LevelEdit.snap_to_grid(%Camera2D.get_global_mouse_position())
 			)
 		)
+	
+	elif current_room < 0: pass
 	
 	elif event.is_action("paint"):
 		current_source.paint.call(%Rooms.get_child(current_room), %Camera2D.get_global_mouse_position())

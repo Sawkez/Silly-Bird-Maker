@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://xypeum6426fn"]
+[gd_scene format=3 uid="uid://xypeum6426fn"]
 
 [ext_resource type="Script" uid="uid://ctasultsiror3" path="res://scripts/level_edit.gd" id="1_7doqw"]
 [ext_resource type="Texture2D" uid="uid://l72ki6des07q" path="res://graphics/icons/grid.png" id="2_0ona1"]
@@ -9,22 +9,23 @@
 [ext_resource type="Texture2D" uid="uid://cfxvl7ratr3x5" path="res://graphics/icons/player.png" id="6_0ona1"]
 [ext_resource type="Script" uid="uid://dh5d7i3g1jtau" path="res://scripts/level_edit/special_tile_selection.gd" id="8_ll51p"]
 [ext_resource type="Script" uid="uid://cnut2cbteepg6" path="res://scripts/level_edit/tile_set.gd" id="8_rlj5u"]
+[ext_resource type="Texture2D" uid="uid://cg33y7dq4q0uq" path="res://icon.svg" id="10_0pn4f"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rlj5u"]
 shader = ExtResource("2_8t7m2")
 shader_parameter/scale = Vector2(4000, 4000)
 
-[node name="LevelEdit" type="Node2D"]
+[node name="LevelEdit" type="Node2D" unique_id=1516016921]
 texture_filter = 1
 script = ExtResource("1_7doqw")
 
-[node name="Parallax2D" type="Parallax2D" parent="."]
+[node name="Parallax2D" type="Parallax2D" parent="." unique_id=370197713]
 z_index = 10
 repeat_size = Vector2(32000, 32000)
 repeat_times = 2
 metadata/_edit_lock_ = true
 
-[node name="Sprite2D" type="Sprite2D" parent="Parallax2D"]
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D" unique_id=223816705]
 texture_repeat = 2
 material = SubResource("ShaderMaterial_rlj5u")
 scale = Vector2(1000, 1000)
@@ -32,23 +33,23 @@ texture = ExtResource("2_0ona1")
 centered = false
 metadata/_edit_lock_ = true
 
-[node name="Rooms" type="Node2D" parent="."]
+[node name="Rooms" type="Node2D" parent="." unique_id=2089854117]
 unique_name_in_owner = true
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=2009870046]
 unique_name_in_owner = true
 editor_draw_screen = false
 
-[node name="PlayerSpawn" type="Sprite2D" parent="."]
-position = Vector2(32, 192)
+[node name="PlayerSpawn" type="Sprite2D" parent="." unique_id=207224668]
+position = Vector2(16, 16)
 texture = ExtResource("6_0ona1")
 
-[node name="Drag" parent="PlayerSpawn" instance=ExtResource("3_2dtcn")]
+[node name="Drag" parent="PlayerSpawn" unique_id=684247230 instance=ExtResource("3_2dtcn")]
 drag_priority = 1
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=652008879]
 
-[node name="Control" type="Control" parent="UI"]
+[node name="Control" type="Control" parent="UI" unique_id=1837782385]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -57,7 +58,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control" unique_id=2061127662]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -65,45 +66,45 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MenuBar" type="MenuBar" parent="UI/Control/VBoxContainer"]
+[node name="MenuBar" type="MenuBar" parent="UI/Control/VBoxContainer" unique_id=1164268697]
 layout_mode = 2
 script = ExtResource("3_fc405")
 
-[node name="file" type="PopupMenu" parent="UI/Control/VBoxContainer/MenuBar"]
+[node name="file" type="PopupMenu" parent="UI/Control/VBoxContainer/MenuBar" unique_id=2010934575]
 title = "File"
 item_count = 1
 item_0/text = "Export"
 item_0/id = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Control/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/Control/VBoxContainer" unique_id=1799574610]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="LeftPanel" type="PanelContainer" parent="UI/Control/VBoxContainer/HBoxContainer"]
+[node name="LeftPanel" type="PanelContainer" parent="UI/Control/VBoxContainer/HBoxContainer" unique_id=300169910]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel" unique_id=340032984]
 layout_mode = 2
 
-[node name="RoomPropertiesLabel" type="Label" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer"]
+[node name="RoomPropertiesLabel" type="Label" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer" unique_id=1055044662]
 layout_mode = 2
 text = "room 0"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer" unique_id=1012564056]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer/ScrollContainer" unique_id=580612443]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer/ScrollContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="UI/Control/VBoxContainer/HBoxContainer/LeftPanel/VBoxContainer/ScrollContainer/VBoxContainer" unique_id=253154431]
 layout_mode = 2
 text = "pooperty"
 
-[node name="Viewport" type="Control" parent="UI/Control/VBoxContainer/HBoxContainer"]
+[node name="Viewport" type="Control" parent="UI/Control/VBoxContainer/HBoxContainer" unique_id=361017403]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -111,41 +112,47 @@ mouse_filter = 1
 mouse_behavior_recursive = 2
 script = ExtResource("3_7plft")
 
-[node name="RightPanel" type="PanelContainer" parent="UI/Control/VBoxContainer/HBoxContainer"]
+[node name="RightPanel" type="PanelContainer" parent="UI/Control/VBoxContainer/HBoxContainer" unique_id=8486372]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 
-[node name="TabContainer" type="TabContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel"]
+[node name="TabContainer" type="TabContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel" unique_id=387402377]
 layout_mode = 2
 current_tab = 0
 clip_tabs = false
 
-[node name="FGTileScroll" type="ScrollContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer"]
+[node name="FGTileScroll" type="ScrollContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer" unique_id=335720238]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 metadata/_tab_index = 0
 
-[node name="FGTileSelection" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer/FGTileScroll"]
+[node name="FGTileSelection" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer/FGTileScroll" unique_id=1505175621]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="SpecialTileScroll" type="ScrollContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer"]
+[node name="SpecialTileScroll" type="ScrollContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer" unique_id=1212833118]
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 metadata/_tab_index = 1
 
-[node name="SpecialTileSelection" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer/SpecialTileScroll"]
+[node name="SpecialTileSelection" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer/SpecialTileScroll" unique_id=610512427]
 layout_mode = 2
 script = ExtResource("8_ll51p")
 
-[node name="TileSetButton" type="Button" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer/SpecialTileScroll/SpecialTileSelection"]
+[node name="TileSetButton" type="Button" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer/SpecialTileScroll/SpecialTileSelection" unique_id=1765479848]
 layout_mode = 2
 text = "spikes"
 script = ExtResource("8_rlj5u")
 type = 1
 metadata/_custom_type_script = "uid://cnut2cbteepg6"
+
+[node name="00ref" type="Sprite2D" parent="." unique_id=2114864878]
+position = Vector2(4, 4)
+scale = Vector2(0.062499996, 0.062499996)
+texture = ExtResource("10_0pn4f")
+metadata/_edit_lock_ = true
 
 [connection signal="id_pressed" from="UI/Control/VBoxContainer/MenuBar/file" to="UI/Control/VBoxContainer/MenuBar" method="_on_file_id_pressed"]

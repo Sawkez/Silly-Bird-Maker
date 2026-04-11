@@ -34,4 +34,4 @@ func paint_spike(room : RoomEdit, pos : Vector2) -> void:
 	room.get_child(1).place_tile(pos)
 
 func erase_spike(room : RoomEdit, pos : Vector2) -> void:
-	pass
+	room.get_child(1).erase_tile(pos)

@@ -29,6 +29,7 @@ var drag : Drag
 var spikemap : SpikeMap
 var properties : Control
 var checkpoints : Node2D
+var room_objects : Node2D
 
 var dbg_chunks : Array[Rect2] = []
 
@@ -44,12 +45,17 @@ func _init(tileset : TileSet, room_dir_path : String, assume_empty : bool = fals
 	checkpoints = Node2D.new()
 	add_child(checkpoints)
 	
+	room_objects = Node2D.new()
+	add_child(room_objects)
+	
 	var json_path := room_dir_path + "/" + ROOM_JSON_FILENAME
 	tile_set = tileset
 	if not FileAccess.file_exists(json_path) or assume_empty:
 		# queue_free()
 		spikemap = SpikeMap.new()
 		add_child(spikemap)
+		
+		checkpoints.add_child(CHECKPOINT_SCENE.instantiate())
 		return
 	
 	var json := JSON.new()
@@ -85,12 +91,17 @@ func _init(tileset : TileSet, room_dir_path : String, assume_empty : bool = fals
 		
 		tile_file.close()
 	
-	for checkpoint : Dictionary in room_properties.checkpoints:
-		var new_checkpoint := CHECKPOINT_SCENE.instantiate()
-		new_checkpoint.set_deferred("global_position", Vector2(checkpoint.x, checkpoint.y))
-		checkpoints.add_child(new_checkpoint)
+	if "checkpoints" in room_properties.keys():
+		for checkpoint : Dictionary in room_properties.checkpoints:
+			var new_checkpoint := CHECKPOINT_SCENE.instantiate()
+			new_checkpoint.set_deferred("global_position", Vector2(checkpoint.x, checkpoint.y))
+			checkpoints.add_child(new_checkpoint)
 	
-	spikemap = SpikeMap.new("%s/spikes.ow" % room_dir_path, position, room_properties.spike_count)
+	if "room_objects" in room_properties.keys():
+		for object : Dictionary in room_properties.room_objects:
+			add_object(RoomObject.make_room_object(object))
+	
+	spikemap = SpikeMap.new("%s/spikes.ow" % room_dir_path, position, room_properties.get("spike_count", 0))
 	add_child(spikemap)
 	
 	#notify_runtime_tile_data_update()
@@ -129,7 +140,8 @@ func export(project_path : String) -> void:
 		"collisions" : [],
 		"ledges" : [],
 		"neighbors" : [],
-		"checkpoints": []
+		"checkpoints": [],
+		"room_objects": []
 	}
 	
 	var occupied : Dictionary[Vector2i, bool] = {}
@@ -233,6 +245,9 @@ func export(project_path : String) -> void:
 			"x" : checkpoint.global_position.x,
 			"y" : checkpoint.global_position.y
 			})
+	
+	for object : RoomObject in room_objects.get_children():
+		rd.room_objects.append(object.export())
 	
 	var json := JSON.stringify(rd)
 	var f := FileAccess.open("%s/rooms/%s/room.json" % [project_path, get_index()], FileAccess.WRITE)
@@ -372,9 +387,15 @@ func view_height_changed(value : int) -> void:
 	should_redraw = true
 
 func checkpoint_count_changed(value : int) -> void:
-	while checkpoints.get_child_count() > value:
-		checkpoints.get_child(0).queue_free()
+	var count := checkpoints.get_child_count()
+	while count > value:
+		count -= 1
+		checkpoints.get_child(count).queue_free()
 	
-	while checkpoints.get_child_count() < value:
+	while count < value:
 		checkpoints.add_child(CHECKPOINT_SCENE.instantiate())
+		count += 1
 	
+
+func add_object(object : RoomObject) -> void:
+	room_objects.add_child(object)

@@ -72,10 +72,17 @@ grow_vertical = 2
 layout_mode = 2
 script = ExtResource("3_fc405")
 
-[node name="file" type="PopupMenu" parent="UI/Control/VBoxContainer/MenuBar" unique_id=2010934575]
+[node name="File" type="PopupMenu" parent="UI/Control/VBoxContainer/MenuBar" unique_id=2010934575]
 title = "File"
+prefer_native_menu = true
 item_count = 1
 item_0/text = "Export"
+item_0/id = 0
+
+[node name="Edit" type="PopupMenu" parent="UI/Control/VBoxContainer/MenuBar" unique_id=851532185]
+prefer_native_menu = true
+item_count = 1
+item_0/text = "add_upgrade_pickup"
 item_0/id = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/Control/VBoxContainer" unique_id=1799574610]
@@ -138,4 +145,5 @@ scale = Vector2(0.062499996, 0.062499996)
 texture = ExtResource("10_0pn4f")
 metadata/_edit_lock_ = true
 
-[connection signal="id_pressed" from="UI/Control/VBoxContainer/MenuBar/file" to="UI/Control/VBoxContainer/MenuBar" method="_on_file_id_pressed"]
+[connection signal="id_pressed" from="UI/Control/VBoxContainer/MenuBar/File" to="UI/Control/VBoxContainer/MenuBar" method="_on_file_id_pressed"]
+[connection signal="id_pressed" from="UI/Control/VBoxContainer/MenuBar/Edit" to="UI/Control/VBoxContainer/MenuBar" method="_on_edit_id_pressed"]

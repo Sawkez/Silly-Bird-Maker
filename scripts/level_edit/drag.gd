@@ -6,12 +6,21 @@ var drag_offset : Vector2
 
 @export var drag_priority : int = 0
 
+var collision : CollisionShape2D
+
+func _init(drag_priority_ : int = 0) -> void:
+	if drag_priority == 0: drag_priority = drag_priority_
+	collision = CollisionShape2D.new()
+	collision.shape = RectangleShape2D.new()
+	collision.shape.size = Vector2(16, 16)
+	add_child(collision)
+
 func _ready() -> void:
-	$CollisionShape2D.shape = $CollisionShape2D.shape.duplicate()
+	collision.shape = collision.shape.duplicate()
 
 func set_rect(rect : Rect2) -> void:
-	$CollisionShape2D.shape.size = rect.size
-	$CollisionShape2D.position = rect.position + rect.size / 2
+	collision.shape.size = rect.size
+	collision.position = rect.position + rect.size / 2
 
 func _input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
 	if event.is_action("drag") and event.is_pressed():

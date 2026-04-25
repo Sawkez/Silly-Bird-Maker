@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://cl8ienxk2qhjr"]
+
+[ext_resource type="Script" uid="uid://8qi3c1tul534" path="res://scripts/project/level_button.gd" id="1_x06vq"]
+
+[node name="LevelButton" type="HBoxContainer" unique_id=468540059]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_x06vq")
+
+[node name="Name" type="LineEdit" parent="." unique_id=2017682147]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "level_name"
+placeholder_text = "level_name"
+
+[node name="Edit" type="Button" parent="." unique_id=884547936]
+layout_mode = 2
+text = "edit"

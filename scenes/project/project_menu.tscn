@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://etlwqqmnrdjv"]
+
+[ext_resource type="Script" uid="uid://dfo4cdd5s0drs" path="res://scripts/project/project_menu.gd" id="1_8b0u4"]
+
+[node name="ProjectMenu" type="HBoxContainer" unique_id=531812461]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8b0u4")
+
+[node name="Properties" type="VBoxContainer" parent="." unique_id=1873213233]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NameLabel" type="Label" parent="Properties" unique_id=237007106]
+layout_mode = 2
+text = "mod_name"
+
+[node name="Name" type="LineEdit" parent="Properties" unique_id=1612322740]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "mod_name"
+
+[node name="spacer" type="Control" parent="Properties" unique_id=1502868693]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Save" type="Button" parent="Properties" unique_id=177200209]
+layout_mode = 2
+text = "save"
+
+[node name="Levels" type="VBoxContainer" parent="." unique_id=1570086843]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LevelsLabel" type="Label" parent="Levels" unique_id=517194200]
+layout_mode = 2
+text = "levels"
+
+[node name="LevelScroll" type="ScrollContainer" parent="Levels" unique_id=1178638470]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LevelList" type="VBoxContainer" parent="Levels/LevelScroll" unique_id=1055623617]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[connection signal="pressed" from="Properties/Save" to="." method="_on_save_pressed"]

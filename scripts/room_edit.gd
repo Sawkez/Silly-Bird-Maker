@@ -192,7 +192,7 @@ func export(project_path : String) -> void:
 						chunk_files[i].store_16(y - used_rect.position.y)
 						chunk_files[i].store_16(atlas_coords.x)
 						chunk_files[i].store_16(atlas_coords.y)
-						chunk_files[i].store_16(get_cell_source_id(coords))
+						chunk_files[i].store_8(get_cell_source_id(coords))
 						
 						print(i, " ", get_cell_source_id(coords))
 						
@@ -352,8 +352,8 @@ func _draw() -> void:
 func place_tile(pos : Vector2, source : int) -> void:
 	var map_pos : Vector2i = local_to_map(to_local(pos))
 	
-	set_cell(map_pos, source - 1)
-	set_cells_terrain_connect([map_pos], 0, source - 1)
+	set_cell(map_pos, source)
+	set_cells_terrain_connect([map_pos], 0, source)
 	
 	tiles_changed()
 

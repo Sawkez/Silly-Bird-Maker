@@ -20,16 +20,31 @@ func _ready() -> void:
 	for path : String in DirAccess.get_directories_at(Global.project_path + "/levels"):
 		var level_name := path
 		
-		for level_json : Dictionary in json.levels:
-			if level_json.path == path:
-				level_name = level_json.name
-				break
+		if "levels" in json.keys():
+			for level_json : Dictionary in json.levels:
+				if level_json.path == path:
+					level_name = level_json.name
+					break
 		
-		var new_button : HBoxContainer = LEVEL_BUTTON_SCENE.instantiate()
-		new_button.get_child(0).text = level_name
-		%LevelList.add_child(new_button)
-		new_button.get_child(1).pressed.connect(load_level.bind(path))
-		new_button.path = path
+		add_button(%LevelList, level_name, path, load_level)
+	
+	for path : String in DirAccess.get_directories_at(Global.project_path + "/skins"):
+		var skin_name := path
+		
+		if "skins" in json.keys():
+			for skin_json : Dictionary in json.skins:
+				if skin_json.path == path:
+					skin_name = skin_json.name
+					break
+		
+		add_button(%SkinList, skin_name, path, load_skin)
+
+func add_button(parent : Node, button_name : String, path : String, callback : Callable) -> void:
+	var new_button : HBoxContainer = LEVEL_BUTTON_SCENE.instantiate()
+	parent.add_child(new_button)
+	new_button.get_child(0).text = button_name
+	new_button.get_child(1).pressed.connect(callback.bind(path))
+	new_button.path = path
 
 func load_level(path : String) -> void:
 	
@@ -78,15 +93,26 @@ func load_level(path : String) -> void:
 	Global.project_path += "/levels/" + path
 	get_tree().change_scene_to_file("res://scenes/level_edit.tscn")
 
+func load_skin(path : String) -> void:
+	Global.project_path += "/skins/" + path
+	get_tree().change_scene_to_file("res://scenes/skin_edit/style_edit.tscn")
+
 func _on_save_pressed() -> void:
 	var properties := {
 		"name" : %Name.text,
 		"tilesheet_sources" : DirAccess.get_files_at(Global.project_path + "/tiles/fg"),
-		"levels" : []
+		"levels" : [],
+		"skins" : []
 	}
 	
 	for button : HBoxContainer in %LevelList.get_children():
 		properties.levels.append({
+			"path" : button.path,
+			"name" : button.get_child(0).text
+		})
+	
+	for button : HBoxContainer in %SkinList.get_children():
+		properties.skins.append({
 			"path" : button.path,
 			"name" : button.get_child(0).text
 		})

@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://cnckwk0b3g4kp"]
+
+[node name="AnimationProperties" type="VBoxContainer" unique_id=2024282092]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Name" type="Label" parent="." unique_id=394797988]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="FpsSpinBox" type="SpinBox" parent="." unique_id=1514046581]
+layout_mode = 2
+min_value = 1.0
+step = 0.25
+value = 12.0
+suffix = "FPS"
+custom_arrow_step = 1.0
+custom_arrow_round = true
+
+[node name="FrameCountSpinBox" type="SpinBox" parent="." unique_id=633495552]
+layout_mode = 2
+min_value = 1.0
+max_value = 1024.0
+value = 1.0
+rounded = true
+suffix = "Frame(s)"
+
+[node name="Looping" type="CheckBox" parent="." unique_id=1825656053]
+layout_mode = 2
+text = "looping"

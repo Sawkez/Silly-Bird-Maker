@@ -49,4 +49,22 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="Skins" type="VBoxContainer" parent="." unique_id=1305367085]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SkinsLabel" type="Label" parent="Skins" unique_id=399692125]
+layout_mode = 2
+text = "skins"
+
+[node name="SkinScroll" type="ScrollContainer" parent="Skins" unique_id=1240805634]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SkinList" type="VBoxContainer" parent="Skins/SkinScroll" unique_id=706535321]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
 [connection signal="pressed" from="Properties/Save" to="." method="_on_save_pressed"]

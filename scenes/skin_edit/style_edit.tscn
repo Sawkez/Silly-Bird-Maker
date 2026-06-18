@@ -1,0 +1,232 @@
+[gd_scene format=3 uid="uid://bt8lu2cd1sjnp"]
+
+[ext_resource type="Script" uid="uid://urudht3l2vue" path="res://scripts/skin_edit/style_edit.gd" id="1_h4at5"]
+[ext_resource type="Shader" uid="uid://dxfsdm6wekaqv" path="res://shaders/SkinPreviewPaletteSwap.gdshader" id="2_h4at5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_167j0"]
+shader = ExtResource("2_h4at5")
+shader_parameter/palette = PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_28akp"]
+animations = []
+
+[node name="StyleEdit" type="Control" unique_id=409167429]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_h4at5")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1458149867]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PreviewVBC" type="VBoxContainer" parent="HBoxContainer" unique_id=119049540]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="HBoxContainer/PreviewVBC" unique_id=1152589906]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control" type="Control" parent="HBoxContainer/PreviewVBC/CenterContainer" unique_id=3236766]
+layout_mode = 2
+
+[node name="Preview" type="AnimatedSprite2D" parent="HBoxContainer/PreviewVBC/CenterContainer/Control" unique_id=796034342]
+unique_name_in_owner = true
+texture_filter = 1
+material = SubResource("ShaderMaterial_167j0")
+scale = Vector2(10, 10)
+sprite_frames = SubResource("SpriteFrames_28akp")
+animation = &""
+
+[node name="ScarfPreview" type="AnimatedSprite2D" parent="HBoxContainer/PreviewVBC/CenterContainer/Control" unique_id=1805780875]
+unique_name_in_owner = true
+texture_filter = 1
+scale = Vector2(10, 10)
+sprite_frames = SubResource("SpriteFrames_28akp")
+animation = &""
+
+[node name="AnimationSelect" type="OptionButton" parent="HBoxContainer/PreviewVBC" unique_id=586956059]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Middle" type="VBoxContainer" parent="HBoxContainer" unique_id=3058611]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ColorsLabel" type="Label" parent="HBoxContainer/Middle" unique_id=1436219168]
+layout_mode = 2
+text = "default_color_palette"
+
+[node name="Colors" type="VBoxContainer" parent="HBoxContainer/Middle" unique_id=631605720]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1092734376]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton2" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1699690643]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton3" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1834751191]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton4" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=635555712]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton5" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=239468283]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton6" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1376026214]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton7" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1308383619]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton8" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=333462702]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton9" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1248114427]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton10" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=774470355]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ScarfPropertiesLabel" type="Label" parent="HBoxContainer/Middle" unique_id=2078802341]
+layout_mode = 2
+text = "scarf_properties"
+
+[node name="ScarfSegmentLength" type="SpinBox" parent="HBoxContainer/Middle" unique_id=1177997758]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 10.0
+value = 2.0
+rounded = true
+prefix = "segment length:"
+suffix = "px"
+
+[node name="ScarfBaseThickness" type="SpinBox" parent="HBoxContainer/Middle" unique_id=1714940828]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 10.0
+value = 1.0
+rounded = true
+prefix = "base thickness:"
+suffix = "px"
+
+[node name="ScarfTipThickness" type="SpinBox" parent="HBoxContainer/Middle" unique_id=707219680]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 10.0
+value = 1.0
+rounded = true
+prefix = "tip thickness:"
+suffix = "px"
+
+[node name="ChargedScarfColorLabel" type="Label" parent="HBoxContainer/Middle" unique_id=476384155]
+layout_mode = 2
+text = "charged_scarf_color"
+
+[node name="ChargedScarfColor" type="ColorPickerButton" parent="HBoxContainer/Middle" unique_id=1921175829]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="EmptyScarfColorLabel2" type="Label" parent="HBoxContainer/Middle" unique_id=77344094]
+layout_mode = 2
+text = "discharged_scarf_color"
+
+[node name="EmptyScarfColor" type="ColorPickerButton" parent="HBoxContainer/Middle" unique_id=1359943071]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="Properties" type="VBoxContainer" parent="HBoxContainer" unique_id=1862775402]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PropertiesLabel" type="Label" parent="HBoxContainer/Properties" unique_id=122577838]
+layout_mode = 2
+text = "skin_properties"
+
+[node name="AllowTwerk" type="CheckBox" parent="HBoxContainer/Properties" unique_id=1440035024]
+layout_mode = 2
+text = "allow_twerk"
+
+[node name="RunFootstepsLabel" type="Label" parent="HBoxContainer/Properties" unique_id=1236249630]
+layout_mode = 2
+text = "run_footstep_frames"
+
+[node name="RunFootsteps" type="LineEdit" parent="HBoxContainer/Properties" unique_id=1257497083]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SlowRunFootstepsLabel" type="Label" parent="HBoxContainer/Properties" unique_id=1478053832]
+layout_mode = 2
+text = "slow_run_footstep_frames"
+
+[node name="SlowRunFootsteps" type="LineEdit" parent="HBoxContainer/Properties" unique_id=341073066]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/Properties" unique_id=645719507]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="AnimationProperties" type="VBoxContainer" parent="HBoxContainer/Properties/ScrollContainer" unique_id=1470176440]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="HBoxContainer/Properties" unique_id=1822066018]
+layout_mode = 2
+text = "save"
+
+[connection signal="item_selected" from="HBoxContainer/PreviewVBC/AnimationSelect" to="." method="_on_animation_select_item_selected"]

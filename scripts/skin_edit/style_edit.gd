@@ -104,7 +104,7 @@ func _ready() -> void:
 	%Scarf.base_width = json.scarf_base_width
 	%ScarfTipWidth.value = json.scarf_tip_width
 	%Scarf.tip_width = json.scarf_tip_width
-	%ScarfWeight.value = json.scarf_weight
+	%ScarfWeight.value = json.scarf_weight * 100.0
 	%Scarf.weight = json.scarf_weight
 	
 	%ChargedScarfColor.color.r8 = json.scarf_charged_color[0]
@@ -375,7 +375,7 @@ func _on_save_pressed() -> void:
 			%EmptyScarfColor.color.g8,
 			%EmptyScarfColor.color.b8
 		],
-		"scarf_weight" : %ScarfWeight.value,
+		"scarf_weight" : %ScarfWeight.value / 100.0,
 		"scarf_positions" : []
 	}
 	

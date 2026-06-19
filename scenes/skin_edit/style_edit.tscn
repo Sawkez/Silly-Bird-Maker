@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://urudht3l2vue" path="res://scripts/skin_edit/style_edit.gd" id="1_h4at5"]
 [ext_resource type="Shader" uid="uid://dxfsdm6wekaqv" path="res://shaders/SkinPreviewPaletteSwap.gdshader" id="2_h4at5"]
+[ext_resource type="Texture2D" uid="uid://jghl6h5yv20r" path="res://graphics/icons/scarf_pin.png" id="3_28akp"]
+[ext_resource type="Script" uid="uid://mkpqwr3i25rm" path="res://scripts/skin_edit/scarf.gd" id="3_167j0"]
+[ext_resource type="Shader" uid="uid://clqfw7fxpv2k2" path="res://shaders/invert_screen_color.gdshader" id="3_dplll"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_167j0"]
 shader = ExtResource("2_h4at5")
@@ -9,6 +12,14 @@ shader_parameter/palette = PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_28akp"]
 animations = []
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h4at5"]
+animations = []
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_28akp"]
+shader = ExtResource("3_dplll")
+
+[sub_resource type="Curve" id="Curve_167j0"]
 
 [node name="StyleEdit" type="Control" unique_id=409167429]
 layout_mode = 3
@@ -31,27 +42,85 @@ grow_vertical = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="HBoxContainer/PreviewVBC" unique_id=1152589906]
+[node name="PreviewCenterer" type="CenterContainer" parent="HBoxContainer/PreviewVBC" unique_id=1152589906]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="HBoxContainer/PreviewVBC/CenterContainer" unique_id=3236766]
+[node name="Control" type="Control" parent="HBoxContainer/PreviewVBC/PreviewCenterer" unique_id=3236766]
+custom_minimum_size = Vector2(160, 160)
+custom_maximum_size = Vector2(160, 160)
 layout_mode = 2
 
-[node name="Preview" type="AnimatedSprite2D" parent="HBoxContainer/PreviewVBC/CenterContainer/Control" unique_id=796034342]
+[node name="Preview" type="AnimatedSprite2D" parent="HBoxContainer/PreviewVBC/PreviewCenterer/Control" unique_id=796034342]
 unique_name_in_owner = true
 texture_filter = 1
 material = SubResource("ShaderMaterial_167j0")
 scale = Vector2(10, 10)
 sprite_frames = SubResource("SpriteFrames_28akp")
 animation = &""
+centered = false
 
-[node name="ScarfPreview" type="AnimatedSprite2D" parent="HBoxContainer/PreviewVBC/CenterContainer/Control" unique_id=1805780875]
+[node name="PreviewScarfOverlay" type="AnimatedSprite2D" parent="HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" unique_id=1805780875]
 unique_name_in_owner = true
 texture_filter = 1
-scale = Vector2(10, 10)
-sprite_frames = SubResource("SpriteFrames_28akp")
+scale = Vector2(0.99999994, 0.99999994)
+sprite_frames = SubResource("SpriteFrames_h4at5")
 animation = &""
+centered = false
+
+[node name="Pin" type="Sprite2D" parent="HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" unique_id=217648552]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_28akp")
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_28akp")
+centered = false
+
+[node name="ScarfCenterer" type="CenterContainer" parent="HBoxContainer/PreviewVBC" unique_id=835113462]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScarfPreview" type="SubViewportContainer" parent="HBoxContainer/PreviewVBC/ScarfCenterer" unique_id=1853502437]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(300, 300)
+custom_maximum_size = Vector2(300, 300)
+layout_mode = 2
+stretch = true
+stretch_shrink = 10
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/PreviewVBC/ScarfCenterer/ScarfPreview" unique_id=975612030]
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(30, 30)
+render_target_update_mode = 4
+
+[node name="Scarf" type="Line2D" parent="HBoxContainer/PreviewVBC/ScarfCenterer/ScarfPreview/SubViewport" unique_id=368740178]
+unique_name_in_owner = true
+position = Vector2(10, 0)
+points = PackedVector2Array(0, 0, -2, 0.39134678, -4, 0.42658415, -6, -0.28242818, -8, -1.3778872, -10, -1.9292446, -12, -1.1590515, -14, 0.8167315, -16, 2.8460245, -18, 3.4113164)
+width = 1.0
+width_curve = SubResource("Curve_167j0")
+script = ExtResource("3_167j0")
+time = 7459.55341807788
+
+[node name="Camera2D" type="Camera2D" parent="HBoxContainer/PreviewVBC/ScarfCenterer/ScarfPreview/SubViewport" unique_id=1526049349]
+
+[node name="ShowScarfPin" type="CheckButton" parent="HBoxContainer/PreviewVBC" unique_id=2030088667]
+layout_mode = 2
+button_pressed = true
+text = "show_scarf_pin"
+
+[node name="ScarfVisibility" type="OptionButton" parent="HBoxContainer/PreviewVBC" unique_id=892775257]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 2
+item_count = 3
+popup/item_0/text = "no_scarf"
+popup/item_0/id = 0
+popup/item_1/text = "empty_scarf"
+popup/item_1/id = 1
+popup/item_2/text = "charged_scarf"
+popup/item_2/id = 2
 
 [node name="AnimationSelect" type="OptionButton" parent="HBoxContainer/PreviewVBC" unique_id=586956059]
 unique_name_in_owner = true
@@ -69,67 +138,74 @@ text = "default_color_palette"
 [node name="Colors" type="VBoxContainer" parent="HBoxContainer/Middle" unique_id=631605720]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="ColorPickerButton" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1092734376]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
 
 [node name="ColorPickerButton2" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1699690643]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
 
 [node name="ColorPickerButton3" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1834751191]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
 
 [node name="ColorPickerButton4" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=635555712]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
 
 [node name="ColorPickerButton5" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=239468283]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
 
 [node name="ColorPickerButton6" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1376026214]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
 
 [node name="ColorPickerButton7" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1308383619]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
 
 [node name="ColorPickerButton8" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=333462702]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
 
 [node name="ColorPickerButton9" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1248114427]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
 
 [node name="ColorPickerButton10" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=774470355]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
+
+[node name="ImportColors" type="Button" parent="HBoxContainer/Middle" unique_id=226190472]
+layout_mode = 2
+text = "import_colors_from_texture"
+
+[node name="Spacer" type="Control" parent="HBoxContainer/Middle" unique_id=1900383350]
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="ScarfPropertiesLabel" type="Label" parent="HBoxContainer/Middle" unique_id=2078802341]
 layout_mode = 2
@@ -145,7 +221,7 @@ rounded = true
 prefix = "segment length:"
 suffix = "px"
 
-[node name="ScarfBaseThickness" type="SpinBox" parent="HBoxContainer/Middle" unique_id=1714940828]
+[node name="ScarfBaseWidth" type="SpinBox" parent="HBoxContainer/Middle" unique_id=1714940828]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
@@ -155,7 +231,7 @@ rounded = true
 prefix = "base thickness:"
 suffix = "px"
 
-[node name="ScarfTipThickness" type="SpinBox" parent="HBoxContainer/Middle" unique_id=707219680]
+[node name="ScarfTipWidth" type="SpinBox" parent="HBoxContainer/Middle" unique_id=707219680]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
@@ -164,6 +240,14 @@ value = 1.0
 rounded = true
 prefix = "tip thickness:"
 suffix = "px"
+
+[node name="ScarfWeight" type="SpinBox" parent="HBoxContainer/Middle" unique_id=1871112329]
+unique_name_in_owner = true
+layout_mode = 2
+rounded = true
+prefix = "weight:"
+suffix = "%"
+custom_arrow_step = 20.0
 
 [node name="ChargedScarfColorLabel" type="Label" parent="HBoxContainer/Middle" unique_id=476384155]
 layout_mode = 2
@@ -196,6 +280,7 @@ layout_mode = 2
 text = "skin_properties"
 
 [node name="AllowTwerk" type="CheckBox" parent="HBoxContainer/Properties" unique_id=1440035024]
+unique_name_in_owner = true
 layout_mode = 2
 text = "allow_twerk"
 
@@ -225,8 +310,26 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Button" type="Button" parent="HBoxContainer/Properties" unique_id=1822066018]
+[node name="ReloadImages" type="Button" parent="HBoxContainer/Properties" unique_id=1822066018]
+layout_mode = 2
+text = "reload_images"
+
+[node name="Save" type="Button" parent="HBoxContainer/Properties" unique_id=987366858]
 layout_mode = 2
 text = "save"
 
+[connection signal="animation_changed" from="HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" to="." method="_on_preview_frame_changed"]
+[connection signal="frame_changed" from="HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" to="." method="_on_preview_frame_changed"]
+[connection signal="sprite_frames_changed" from="HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" to="." method="_on_preview_frame_changed"]
+[connection signal="toggled" from="HBoxContainer/PreviewVBC/ShowScarfPin" to="." method="_on_show_scarf_pin_toggled"]
+[connection signal="item_selected" from="HBoxContainer/PreviewVBC/ScarfVisibility" to="." method="_on_scarf_visibility_item_selected"]
 [connection signal="item_selected" from="HBoxContainer/PreviewVBC/AnimationSelect" to="." method="_on_animation_select_item_selected"]
+[connection signal="pressed" from="HBoxContainer/Middle/ImportColors" to="." method="_on_import_colors_pressed"]
+[connection signal="value_changed" from="HBoxContainer/Middle/ScarfSegmentLength" to="." method="_on_scarf_segment_length_value_changed"]
+[connection signal="value_changed" from="HBoxContainer/Middle/ScarfBaseWidth" to="." method="_on_scarf_base_width_value_changed"]
+[connection signal="value_changed" from="HBoxContainer/Middle/ScarfTipWidth" to="." method="_on_scarf_tip_width_value_changed"]
+[connection signal="value_changed" from="HBoxContainer/Middle/ScarfWeight" to="." method="_on_scarf_weight_value_changed"]
+[connection signal="color_changed" from="HBoxContainer/Middle/ChargedScarfColor" to="." method="_on_charged_scarf_color_color_changed"]
+[connection signal="color_changed" from="HBoxContainer/Middle/EmptyScarfColor" to="." method="_on_empty_scarf_color_color_changed"]
+[connection signal="pressed" from="HBoxContainer/Properties/ReloadImages" to="." method="_on_reload_images_pressed"]
+[connection signal="pressed" from="HBoxContainer/Properties/Save" to="." method="_on_save_pressed"]

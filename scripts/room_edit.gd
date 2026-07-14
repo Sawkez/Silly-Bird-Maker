@@ -19,7 +19,7 @@ const CHECKPOINT_SCENE := preload("res://scenes/level_edit/checkpoint.tscn")
 
 const ROOM_JSON_FILENAME = "room.json"
 
-const CHUNK_TEXTURE_SIZE := Vector2i(256, 256)
+const CHUNK_TEXTURE_SIZE := Vector2i(512, 512)
 const CHUNK_SIZE := CHUNK_TEXTURE_SIZE - Vector2i(8, 8) # allow 1 tile for layering
 
 var sources := []

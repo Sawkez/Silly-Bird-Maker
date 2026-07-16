@@ -9,28 +9,27 @@ const upgrade_names : PackedStringArray = ["dive", "dash", "slide", "diveboost",
 var upgrade : Upgrade = Upgrade.DIVE
 var properties : Control
 
-func _init(dict : Dictionary = {}) -> void:
-	super._init(dict)
-	if dict != {}:
-		set_position_async(Vector2(dict.position.x, dict.position.y))
+func _init(binary : BinaryReader = null) -> void:
+	super._init(binary)
 	
 	properties = PROPERTIES_SCENE.instantiate()
 	properties.get_node("Upgrade").item_selected.connect(set_upgrade)
 	
-	set_upgrade(dict.get(upgrade, 0))
+	if binary != null:
+		set_upgrade(binary.file.get_8())
+		
+		var new_pos : Vector2
+		new_pos.x = binary.file.get_float()
+		new_pos.y = binary.file.get_float()
+		set_position_async(new_pos)
 
-func export() -> Dictionary:
-	var dict : Dictionary = super.export()
-	dict.upgrade = upgrade
-	dict.position = {
-		"x": global_position.x,
-		"y": global_position.y
-	}
-	dict.relative_position = {
-		"x": position.x,
-		"y": position.y
-	}
-	return dict
+func export() -> BinarySection:
+	var section := super.export()
+	section.push_u8(upgrade)
+	section.push_float(global_position.x)
+	section.push_float(global_position.y)
+	
+	return section
 
 func set_upgrade(new_upgrade : int = 0) -> void:
 	upgrade = new_upgrade as Upgrade

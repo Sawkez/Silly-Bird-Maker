@@ -20,21 +20,18 @@ var spikes : Dictionary[Vector2i, Spike]
 func unsigned16_to_signed(unsigned : int) -> int:
 	return (unsigned + MAX_15B) % MAX_16B - MAX_15B
 
-func _init(file_path := "", room_pos := Vector2.ZERO, spike_count : int = 0) -> void:
-	if file_path == "": return
-	
-	var f := FileAccess.open(file_path, FileAccess.READ)
+func _init(binary : BinaryReader = null, room_pos := Vector2.ZERO, spike_count : int = 0) -> void:
+	if binary == null: return
 	
 	for i : int in spike_count:
-		var x := unsigned16_to_signed(f.get_16()) - room_pos.x / 8
-		var y := unsigned16_to_signed(f.get_16()) - room_pos.y / 8
-		var mask := f.get_8()
-		
-		print("%s, %s: %s" % [x, y, mask])
+		var x := unsigned16_to_signed(binary.file.get_16()) - room_pos.x / 8
+		var y := unsigned16_to_signed(binary.file.get_16()) - room_pos.y / 8
+		var mask := binary.file.get_8()
 		
 		var new_spike := Spike.new(mask)
 		add_child(new_spike)
 		new_spike.set_position_async(x * 8, y * 8)
+		@warning_ignore("narrowing_conversion")
 		spikes[Vector2i(x, y)] = new_spike
 		new_spike.queue_redraw()
 
@@ -93,44 +90,70 @@ func get_colliders() -> Array[Rect2]:
 	
 	return arr
 
-func export_colliders(file_path : String, room_pos : Vector2) -> int:
-	var f := FileAccess.open(file_path, FileAccess.WRITE)
+func get_colliders_section(room_pos : Vector2) -> Dictionary:
+	var data := BinarySection.new("SKCL")
 	
 	var spike_count : int = 0
 	
 	for pos : Vector2i in spikes.keys():
 		if spikes[pos].mask == 0: continue
-		f.store_16(pos.x + room_pos.x / 8)
-		f.store_16(pos.y + room_pos.y / 8)
-		f.store_8(spikes[pos].mask)
+		
+		@warning_ignore("narrowing_conversion")
+		data.push_u16(pos.x + room_pos.x / 8)
+		@warning_ignore("narrowing_conversion")
+		data.push_u16(pos.y + room_pos.y / 8)
+		data.push_u8(spikes[pos].mask)
 		
 		spike_count += 1
 	
-	f.close()
-	
-	return spike_count
+	return {
+		"section" : data,
+		"count" : spike_count
+	}
 
-func export(chunks : Array[Rect2], room_dir : String) -> PackedInt32Array:
+func get_tile_section(chunk : Vector2i) -> Dictionary:
+	var data := BinarySection.new("SPIK")
+	var count : int = 0
 	
-	var chunk_files : Array[FileAccess]
-	var chunk_spike_counts : PackedInt32Array
-	
-	for i : int in chunks.size():
-		chunk_files.append(FileAccess.open(room_dir + "/%s.spikes" % i, FileAccess.WRITE))
-		chunk_spike_counts.append(0)
-		
-	
+	var rect := Rect2(chunk * RoomEdit.CHUNK_SIZE, RoomEdit.CHUNK_SIZE)
 	for spike : Vector2i in spikes.keys():
-		for i : int in chunks.size():
-			if chunks[i].has_point(spike * 8):
-				for atlas : Vector2i in spikes[spike].get_atlases():
-					chunk_files[i].store_16(spike.x)
-					chunk_files[i].store_16(spike.y)
-					chunk_files[i].store_16(atlas.x)
-					chunk_files[i].store_16(atlas.y)
-					chunk_spike_counts[i] += 1
+		if not rect.has_point(spike * 8): continue
+		
+		for atlas : Vector2i in spikes[spike].get_atlases():
+			data.push_u16(spike.x)
+			data.push_u16(spike.y)
+			
+			var atlas_id : int = (atlas.y << 2) + atlas.x
+			data.push_u8(atlas_id)
+			
+			count += 1
 	
-	for f : FileAccess in chunk_files:
-		f.close()
-	
-	return chunk_spike_counts
+	return {
+		"section" : data,
+		"count" : count
+	}
+
+#func export(chunks : Array[Rect2], room_dir : String) -> PackedInt32Array:
+#	
+#	var chunk_files : Array[FileAccess]
+#	var chunk_spike_counts : PackedInt32Array
+#	
+#	for i : int in chunks.size():
+#		chunk_files.append(FileAccess.open(room_dir + "/%s.spikes" % i, FileAccess.WRITE))
+#		chunk_spike_counts.append(0)
+#		
+#	
+#	for spike : Vector2i in spikes.keys():
+#		for i : int in chunks.size():
+#			if chunks[i].has_point(spike * 8):
+#				for atlas : Vector2i in spikes[spike].get_atlases():
+#					chunk_files[i].store_16(spike.x)
+#					chunk_files[i].store_16(spike.y)
+#					chunk_files[i].store_16(atlas.x)
+#					chunk_files[i].store_16(atlas.y)
+#					chunk_spike_counts[i] += 1
+#	
+#	for f : FileAccess in chunk_files:
+#		f.close()
+#	
+#	return chunk_spike_counts

@@ -31,7 +31,7 @@ func _ready() -> void:
 	$PlayerSpawn.global_position.y = properties.player_y
 	
 	for i : int in properties.room_count:
-		var new_room := RoomEdit.new(Global.tile_set, Global.project_path + "/rooms/%s" % i)
+		var new_room := RoomEdit.new(Global.tile_set, Global.project_path + "/rooms/%s.room" % i)
 		$Rooms.add_child(new_room)
 		%Viewport.room_selected.connect(new_room.room_selected)
 	
@@ -50,7 +50,7 @@ func add_tile_button(texture : Texture2D, tile_name : String, id : int) -> void:
 # @export_tool_button("Export level") var dbg_export : Callable = export
 func export() -> void:
 	
-	DirAccess.make_dir_recursive_absolute(Global.project_path)
+	DirAccess.make_dir_recursive_absolute(Global.project_path + "/rooms")
 	
 	var starting_room := 0
 	

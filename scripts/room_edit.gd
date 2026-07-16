@@ -33,7 +33,7 @@ var room_objects : Node2D
 
 var dbg_chunks : Array[Rect2] = []
 
-func _init(tileset : TileSet, room_dir_path : String, assume_empty : bool = false) -> void:
+func _init(tileset : TileSet, room_path : String, assume_empty : bool = false) -> void:
 	drag = DRAG_SCENE.instantiate()
 	add_child(drag)
 	
@@ -47,10 +47,9 @@ func _init(tileset : TileSet, room_dir_path : String, assume_empty : bool = fals
 	
 	room_objects = Node2D.new()
 	add_child(room_objects)
-	
-	var json_path := room_dir_path + "/" + ROOM_JSON_FILENAME
 	tile_set = tileset
-	if not FileAccess.file_exists(json_path) or assume_empty:
+	
+	if not FileAccess.file_exists(room_path) or assume_empty:
 		# queue_free()
 		spikemap = SpikeMap.new()
 		add_child(spikemap)
@@ -58,53 +57,67 @@ func _init(tileset : TileSet, room_dir_path : String, assume_empty : bool = fals
 		checkpoints.add_child(CHECKPOINT_SCENE.instantiate())
 		return
 	
-	var json := JSON.new()
-	json.parse(FileAccess.get_file_as_string(json_path))
-	var room_properties : Dictionary = json.data
+	var binary := BinaryReader.new(room_path)
+	binary.ensure_section("PROP")
 	
-	position.x = room_properties.position_x
-	position.y = room_properties.position_y
-	target_width = room_properties.target_width
-	target_height = room_properties.target_height
+	position.x = binary.file.get_64()
+	position.y = binary.file.get_64()
+	binary.file.get_16() # width
+	binary.file.get_16() # height
+	target_width = binary.file.get_16()
+	target_height = binary.file.get_16()
 	
-	properties.get_node("ViewWidth").value = room_properties.target_width
-	properties.get_node("ViewHeight").value = room_properties.target_height
+	properties.get_node("ViewWidth").value = target_width
+	properties.get_node("ViewHeight").value = target_height
 	
-	for chunk : int in room_properties.chunks.size():
-		var chunk_path = room_dir_path + "/%s.chunk" % chunk
-		var tile_file := FileAccess.open(chunk_path, FileAccess.READ)
+	var chunk_count := binary.file.get_8()
+	var collider_count := binary.file.get_32()
+	var spike_collider_count := binary.file.get_32()
+	var checkpoint_count := binary.file.get_8()
+	binary.file.get_8() # neighbor count
+	binary.file.get_32() # ledge count
+	var object_count := binary.file.get_16()
+	
+	for chunk : int in chunk_count:
+		binary.ensure_section("CHNK")
 		
-		for tile : int in room_properties.chunks[chunk].tile_count:
+		binary.file.get_16() # x
+		binary.file.get_16() # y
+		binary.file.get_16() # w
+		binary.file.get_16() # h
+		
+		var tile_count := binary.file.get_32()
+		binary.file.get_32() # spike count
+		
+		binary.ensure_section("TLFG")
+		for tile : int in tile_count:
 			var tile_pos : Vector2i
-			@warning_ignore("integer_division")
-			tile_pos.x = tile_file.get_16()
-			@warning_ignore("integer_division")
-			tile_pos.y = tile_file.get_16()
+			tile_pos.x = binary.file.get_16()
+			tile_pos.y = binary.file.get_16()
 			
 			var atlas_pos : Vector2i
-			atlas_pos.x = tile_file.get_16()
-			atlas_pos.y = tile_file.get_16()
+			atlas_pos.x = binary.file.get_16()
+			atlas_pos.y = binary.file.get_16()
 			
-			var source_id : int = tile_file.get_16()
+			var source_id : int = binary.file.get_8()
 			
 			set_cell(tile_pos, source_id, atlas_pos)
-		
-		tile_file.close()
 	
-	if "checkpoints" in room_properties.keys():
-		for checkpoint : Dictionary in room_properties.checkpoints:
-			var new_checkpoint := CHECKPOINT_SCENE.instantiate()
-			new_checkpoint.set_deferred("global_position", Vector2(checkpoint.x, checkpoint.y))
-			checkpoints.add_child(new_checkpoint)
-	
-	if "room_objects" in room_properties.keys():
-		for object : Dictionary in room_properties.room_objects:
-			add_object(RoomObject.make_room_object(object))
-	
-	spikemap = SpikeMap.new("%s/spikes.ow" % room_dir_path, position, room_properties.get("spike_count", 0))
+	binary.ensure_section("SKCL")
+	spikemap = SpikeMap.new(binary, position, spike_collider_count)
 	add_child(spikemap)
 	
-	#notify_runtime_tile_data_update()
+	binary.ensure_section("CKPT")
+	for checkpoint : int in checkpoint_count:
+		
+		var new_checkpoint := CHECKPOINT_SCENE.instantiate()
+		new_checkpoint.set_deferred("global_position:x", binary.file.get_float())
+		new_checkpoint.set_deferred("global_position:y", binary.file.get_float())
+		checkpoints.add_child(new_checkpoint)
+	
+	for object : int in object_count:
+		binary.find_section("OBJT")
+		add_object(RoomObject.make_room_object(binary))
 
 func _ready() -> void:
 	tiles_changed()
@@ -117,202 +130,221 @@ static func make_empty(tileset : TileSet, roomDirPath : String, pos : Vector2) -
 # @export_tool_button("export to json") var export_v := export
 func export(project_path : String) -> void:
 	
-	DirAccess.make_dir_recursive_absolute(project_path + "/rooms/%s" % get_index())
-	
-	var pdir := DirAccess.open(project_path + "/rooms/%s" % get_index())
-	
-	for path : String in pdir.get_files():
-		pdir.remove(path)
-	
 	await get_tree().process_frame
-	
-	var used_rect := get_used_rect()
 	var room_rect := get_room_rect()
 	
-	var rd := {
-		"target_width" : target_width,
-		"target_height" : target_height,
-		"position_x" : room_rect.position.x,
-		"position_y" : room_rect.position.y,
-		"width" : room_rect.size.x,
-		"height" : room_rect.size.y,
-		"chunks" : [],
-		"collisions" : [],
-		"ledges" : [],
-		"neighbors" : [],
-		"checkpoints": [],
-		"room_objects": []
-	}
+	var meta := BinarySection.new("PROP")
+	meta.push_s64(int(room_rect.position.x))
+	meta.push_s64(int(room_rect.position.y))
+	meta.push_u16(int(room_rect.size.x))
+	meta.push_u16(int(room_rect.size.y))
+	meta.push_u16(target_width)
+	meta.push_u16(target_height)
 	
-	var occupied : Dictionary[Vector2i, bool] = {}
+	@warning_ignore("integer_division")
+	var chunk_count : Vector2i = ceil(room_rect.size / Vector2(CHUNK_SIZE))
 	
-	var chunks : Array[Rect2] = []
+	var chunk_data : Dictionary[Vector2i, Dictionary] = {}
 	
-	var size : Vector2i = room_rect.size
+	for chunk_x : int in chunk_count.x:
+		for chunk_y : int in chunk_count.y:
+			chunk_data[Vector2i(chunk_x, chunk_y)] = get_chunk_data(room_rect, Vector2i(chunk_x, chunk_y))
 	
-	while size.x > 0:
-		size.x -= CHUNK_SIZE.x
-		@warning_ignore("narrowing_conversion")
-		size.y = room_rect.size.y
+	var chunk_sorter := func(a : Vector2i, b : Vector2i) -> bool:
+		if a.x > b.x: return true
+		if a.x == b.x and a.y > b.y: return true
+		return false
+	
+	var chunk_keys := chunk_data.keys()
+	chunk_keys.sort_custom(chunk_sorter)
+	
+	meta.push_u8(chunk_count.x * chunk_count.y)
+	
+	var colliders : Array[Rect2] = optimize_collisions(get_used_cells())
+	var colliders_section := BinarySection.new("TLCL")
+	for collider : Rect2 in colliders:
+		var true_collider := grow_collider(collider, room_rect)
 		
-		while size.y > 0:
-			size.y -= CHUNK_SIZE.y
-			
-			var chunk_pos := size.max(Vector2i.ZERO)
-			
-			chunks.append(Rect2(chunk_pos, size - chunk_pos + CHUNK_SIZE))
-			rd.chunks.append({
-				"x": chunk_pos.x,
-				"y": chunk_pos.y,
-				"width": size.x - chunk_pos.x + CHUNK_TEXTURE_SIZE.x,
-				"height": size.y - chunk_pos.y + CHUNK_TEXTURE_SIZE.y,
-				"tile_count": 0
-			})
+		colliders_section.push_float(true_collider.position.x)
+		colliders_section.push_float(true_collider.position.y)
+		colliders_section.push_float(true_collider.size.x)
+		colliders_section.push_float(true_collider.size.y)
 	
-	var chunk_files : Array[FileAccess] = []
+	meta.push_u32(colliders.size())
 	
-	for i : int in chunks.size():
-		chunk_files.append(FileAccess.open(project_path + "/rooms/%s/%s.chunk" % [get_index(), i], FileAccess.WRITE))
+	var spike_collider_data := spikemap.get_colliders_section(room_rect.position)
+	meta.push_u32(spike_collider_data.count)
 	
-	var y := used_rect.position.y + used_rect.size.y - 1
-	while y >= used_rect.position.y:
-		
-		var x := used_rect.position.x + used_rect.size.x - 1
-		while x >= used_rect.position.x:
-			var coords := Vector2i(x, y)
-			var atlas_coords := get_cell_atlas_coords(coords)
-			
-			if atlas_coords != Vector2i(-1, -1):
-				
-				# figuring out what chunk this tile is in
-				for i : int in chunks.size():
-					if chunks[i].has_point(Vector2((x - used_rect.position.x) * 8, (y - used_rect.position.y) * 8)):
-						
-						chunk_files[i].store_16(x - used_rect.position.x)
-						chunk_files[i].store_16(y - used_rect.position.y)
-						chunk_files[i].store_16(atlas_coords.x)
-						chunk_files[i].store_16(atlas_coords.y)
-						chunk_files[i].store_8(get_cell_source_id(coords))
-						
-						print(i, " ", get_cell_source_id(coords))
-						
-						rd.chunks[i].tile_count += 1
-						break
-				
-				occupied[coords * 8] = true
-			
-			if atlas_coords in LEDGE_COORDS:
-				rd.ledges.append({
-					"x": int(x * 8 + global_position.x),
-					"y": int(y * 8 + global_position.y)
-				})
-			
-			#var data := get_cell_tile_data(coords)
-			
-			
-			x -= 1
-		
-		y -= 1
+	var checkpoints_section := BinarySection.new("CKPT")
+	for cp : Node2D in checkpoints.get_children():
+		checkpoints_section.push_float(cp.global_position.x)
+		checkpoints_section.push_float(cp.global_position.y)
 	
-	rd.collisions = optimize_collisions(occupied)
+	meta.push_u8(checkpoints.get_child_count())
 	
+	var neighbors := BinarySection.new("NGBR")
+	var neighbor_count : int = 0
 	for room : RoomEdit in get_parent().get_children():
 		if room == self: continue
 		
 		var neighbor_rect := room.get_room_rect()
-		if room_rect.intersects(neighbor_rect, true):
-			rd.neighbors.append({
-				"x": neighbor_rect.position.x,
-				"y": neighbor_rect.position.y,
-				"width": neighbor_rect.size.x,
-				"height": neighbor_rect.size.y,
-				"index": room.get_index()
-			})
+		if not room_rect.intersects(neighbor_rect, true): continue
+		
+		neighbors.push_s64(int(neighbor_rect.position.x))
+		neighbors.push_s64(int(neighbor_rect.position.y))
+		neighbors.push_u16(int(neighbor_rect.size.x))
+		neighbors.push_u16(int(neighbor_rect.size.y))
+		
+		neighbors.push_u32(room.get_index())
+		
+		neighbor_count += 1
 	
-	for file : FileAccess in chunk_files:
-		file.close()
+	meta.push_u8(neighbor_count)
 	
-	var chunk_spike_counts := spikemap.export(chunks, project_path + "/rooms/%s" % get_index())
+	var ledges := BinarySection.new("LEGE")
+	var ledge_count : int = 0
+	for tile : Vector2i in get_used_cells():
+		if get_cell_atlas_coords(tile) in LEDGE_COORDS:
+			ledges.push_s64(tile.x * 8 + int(global_position.x))
+			ledges.push_s64(tile.y * 8 + int(global_position.y))
+			ledge_count += 1
 	
-	for chunk : int in chunk_spike_counts.size():
-		rd.chunks[chunk].spike_count = chunk_spike_counts[chunk]
+	meta.push_u32(ledge_count);
 	
-	var spike_count := spikemap.export_colliders("%s/rooms/%s/spikes.ow" % [project_path, get_index()], position)
-	rd.spike_count = spike_count
-	
-	for checkpoint : Node2D in checkpoints.get_children():
-		rd.checkpoints.append({
-			"x" : checkpoint.global_position.x,
-			"y" : checkpoint.global_position.y
-			})
-	
+	var object_data : Array[BinarySection] = []
 	for object : RoomObject in room_objects.get_children():
-		rd.room_objects.append(object.export())
+		object_data.append(object.export())
 	
-	var json := JSON.stringify(rd)
-	var f := FileAccess.open("%s/rooms/%s/room.json" % [project_path, get_index()], FileAccess.WRITE)
+	meta.push_u16(object_data.size())
 	
-	f.store_string(json)
-	f.close()
+	var file := FileAccess.open(project_path + "/rooms/%s.room" % get_index(), FileAccess.WRITE)
 	
-	dbg_chunks = chunks
+	meta.write(file)
+	for key : Vector2i in chunk_keys:
+		chunk_data[key].chunk.write(file)
+		chunk_data[key].fg_tile.write(file)
+		chunk_data[key].spike.write(file)
+	
+	colliders_section.write(file)
+	spike_collider_data.section.write(file)
+	checkpoints_section.write(file)
+	neighbors.write(file)
+	ledges.write(file)
+	
+	for object : BinarySection in object_data:
+		object.write(file)
+	
+	file.close()
 
-func optimize_collisions(occupied: Dictionary) -> Array:
+func get_chunk_data(room_rect : Rect2, chunk : Vector2i) -> Dictionary[String, BinarySection]:
+	var data := {
+		"chunk" : BinarySection.new("CHNK"),
+		"fg_tile" : BinarySection.new("TLFG")
+	}
 	
-	var result := []
+	var chunk_position : Vector2i = chunk * CHUNK_SIZE
+	var chunk_size : Vector2i
+	chunk_size.x = mini(CHUNK_SIZE.x, int(room_rect.size.x) - chunk_position.x) + 8
+	chunk_size.y = mini(CHUNK_SIZE.y, int(room_rect.size.y) - chunk_position.y) + 8
 	
-	while occupied.size() > 0:
-		# pick topleft square
-		var start : Vector2i = occupied.keys()[0]
-		for p in occupied.keys():
-			if p.y < start.y or (p.y == start.y and p.x < start.x):
-				start = p
+	data.chunk.push_u16(chunk_position.x)
+	data.chunk.push_u16(chunk_position.y)
+	data.chunk.push_u16(chunk_size.x)
+	data.chunk.push_u16(chunk_size.y)
+	
+	@warning_ignore("integer_division")
+	var chunk_first_tile : Vector2i = chunk * CHUNK_SIZE / 8 + chunk_size / 8
+	@warning_ignore("integer_division")
+	var chunk_last_tile : Vector2i = chunk * CHUNK_SIZE / 8
+	
+	var tile_count : int = 0
+	
+	for x : int in range(chunk_first_tile.x - 1, chunk_last_tile.x - 1, -1):
+		for y : int in range(chunk_first_tile.y - 1, chunk_last_tile.y - 1, -1):
+			
+			var cell := Vector2i(x, y)
+			
+			var atlas := get_cell_atlas_coords(cell)
+			if atlas == Vector2i(-1, -1): continue
+			
+			var source := get_cell_source_id(cell)
+			if source == -1: continue
+			
+			tile_count += 1
+			
+			data.fg_tile.push_u16(x)
+			data.fg_tile.push_u16(y)
+			data.fg_tile.push_u16(atlas.x)
+			data.fg_tile.push_u16(atlas.y)
+			data.fg_tile.push_u8(source)
+	
+	data.chunk.push_u32(tile_count)
+	
+	var spike_data := spikemap.get_tile_section(chunk)
+	data.spike = spike_data.section
+	
+	data.chunk.push_u32(spike_data.count)
+	
+	return data
+
+func optimize_collisions(tiles : Array[Vector2i]) -> Array[Rect2]:
+	
+	var tile_sorter := func(a : Vector2i, b : Vector2i) -> bool:
+		if a.x < b.x: return true
+		if a.x == b.x and a.y < b.y: return true
+		return false
+	
+	tiles.sort_custom(tile_sorter)
+	
+	var result : Array[Rect2] = []
+	
+	while not tiles.is_empty():
+		var rect := Rect2i(tiles[0], Vector2i(0, 0))
+		while rect.end in tiles:
+			tiles.erase(rect.end)
+			rect.end.x += 1
 		
-		# expand right
-		var width := 8
-		while occupied.has(start + Vector2i(width, 0)):
-			width += 8
+		rect.end.y += 1
 		
-		# expand down
-		var height := 8
-		var can_expand := true
-		while can_expand:
-			for x in range(0, width, 8):
-				if not occupied.has(start + Vector2i(x, height)):
-					can_expand = false
+		var extend : bool = true
+		while extend:
+			for x : int in range(rect.position.x, rect.end.x):
+				var check := Vector2i(x, rect.end.y)
+				if check not in tiles:
+					extend = false
 					break
-			if can_expand:
-				height += 8
+			
+			if not extend: break
+			
+			for x : int in range(rect.position.x, rect.end.x):
+				tiles.erase(Vector2i(x, rect.end.y))
+			
+			rect.end.y += 1
 		
-		# erase combined squares
-		for y in range(0, height, 8):
-			for x in range(0, width, 8):
-				occupied.erase(start + Vector2i(x, y))
-		
-		start += Vector2i(position)
-		
-		if is_equal_approx(start.x, get_room_rect().position.x):
-			start.x -= 16
-			width += 16
-		
-		if is_equal_approx(start.y, get_room_rect().position.y):
-			start.y -= 16
-			height += 16
-		
-		if is_equal_approx(start.x + width, get_room_rect().end.x):
-			width += 16
-		
-		if is_equal_approx(start.y + height, get_room_rect().end.y):
-			height += 16
-		
-		result.append({
-			"x": start.x,
-			"y": start.y,
-			"width": width,
-			"height": height
-		})
+		result.append(rect)
 	
 	return result
+
+func grow_collider(collider : Rect2, room_rect : Rect2) -> Rect2:
+	collider.position *= 8
+	collider.position += global_position
+	collider.size *= 8
+	
+	if collider.position.x == room_rect.position.x:
+		collider.position.x -= 8
+		collider.size.x += 8
+	
+	if collider.end.x == room_rect.end.x:
+		collider.size.x += 8
+	
+	if collider.position.y == room_rect.position.y:
+		collider.position.y -= 8
+		collider.size.y += 8
+	
+	if collider.end.y == room_rect.end.y:
+		collider.size.y += 8
+	
+	return collider
 
 func get_room_rect() -> Rect2:
 	var used_rect := get_used_rect()

@@ -35,8 +35,6 @@ func _gui_input(event: InputEvent) -> void:
 	elif event.is_action("zoom_out"):
 		zoom(false)
 	
-	elif event.is_action("drag"): pass
-	
 	elif event.is_action("select_room"):
 		
 		for i : int in %Rooms.get_child_count():
@@ -50,13 +48,16 @@ func _gui_input(event: InputEvent) -> void:
 		
 		current_room = %Rooms.get_child_count()
 		
-		%Rooms.add_child(
-			RoomEdit.make_empty(
-				Global.tile_set, 
-				Global.project_path + "/rooms/%s" % %Rooms.get_child_count(), 
-				LevelEdit.snap_to_grid(%Camera2D.get_global_mouse_position())
-			)
+		var new_room := RoomEdit.make_empty(
+			Global.tile_set, 
+			Global.project_path + "/rooms/%s" % %Rooms.get_child_count(), 
+			LevelEdit.snap_to_grid(%Camera2D.get_global_mouse_position())
 		)
+		
+		%Rooms.add_child(new_room)
+		room_selected.connect(new_room.room_selected)
+	
+	elif event.is_action("drag"): pass
 	
 	elif current_room < 0: pass
 	

@@ -7,6 +7,10 @@ var size : int
 func _init(id : String) -> void:
 	tag = id
 
+func resize(new_size : int) -> void:
+	size = new_size
+	data.resize(new_size)
+
 func push_s64(value : int) -> void:
 	var pos := size
 	size += 8

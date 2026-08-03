@@ -71,7 +71,6 @@ func _init(tileset : TileSet, room_path : String, assume_empty : bool = false) -
 	properties.get_node("ViewHeight").value = target_height
 	
 	var chunk_count := binary.file.get_8()
-	var collider_count := binary.file.get_32()
 	var spike_collider_count := binary.file.get_32()
 	var checkpoint_count := binary.file.get_8()
 	binary.file.get_8() # neighbor count
@@ -160,17 +159,19 @@ func export(project_path : String) -> void:
 	
 	meta.push_u8(chunk_count.x * chunk_count.y)
 	
-	var colliders : Array[Rect2] = optimize_collisions(get_used_cells())
 	var colliders_section := BinarySection.new("TLCL")
-	for collider : Rect2 in colliders:
-		var true_collider := grow_collider(collider, room_rect)
+	var tile_count : Vector2i = room_rect.size / 8
+	var colliders_byte_length := ceili(tile_count.x * tile_count.y / 8.0)
+	colliders_section.resize(colliders_byte_length)
+	colliders_section.data.fill(0)
+	for tile : Vector2i in get_used_cells():
+		var bit_index := tile_count.x * tile.y + tile.x
 		
-		colliders_section.push_float(true_collider.position.x)
-		colliders_section.push_float(true_collider.position.y)
-		colliders_section.push_float(true_collider.size.x)
-		colliders_section.push_float(true_collider.size.y)
-	
-	meta.push_u32(colliders.size())
+		@warning_ignore("integer_division")
+		var byte_index := bit_index / 8
+		var bit_local_index := bit_index - byte_index * 8
+		
+		colliders_section.data[byte_index] |= (1 << bit_local_index)
 	
 	var spike_collider_data := spikemap.get_colliders_section(room_rect.position)
 	meta.push_u32(spike_collider_data.count)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://crksj0qen0ve8"]
+[gd_scene format=3 uid="uid://crksj0qen0ve8"]
 
 [ext_resource type="Script" uid="uid://qj0he3xqo4xl" path="res://scripts/curve_baker.gd" id="1_wiqoe"]
 
@@ -6,7 +6,7 @@
 _data = [Vector2(0, 0.68719935), 0.0, 0.0, 0, 0, Vector2(0.1375, 0.93118393), 0.0, 0.0, 0, 0, Vector2(0.43000004, 0.9186719), 0.09813264, 0.09813264, 0, 0, Vector2(0.70000005, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -3.1613278, 0.0, 0, 0]
 point_count = 5
 
-[node name="Node" type="Node"]
+[node name="Node" type="Node" unique_id=1768046697]
 script = ExtResource("1_wiqoe")
 directory = "/home/sokz/projects/sbspsp/content/curves/particles"
 file_name = "dive_scale"

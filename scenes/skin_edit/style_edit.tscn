@@ -97,11 +97,11 @@ render_target_update_mode = 4
 [node name="Scarf" type="Line2D" parent="HBoxContainer/PreviewVBC/ScarfCenterer/ScarfPreview/SubViewport" unique_id=368740178]
 unique_name_in_owner = true
 position = Vector2(10, 0)
-points = PackedVector2Array(0, 0, -2, 0.07506891, -4, -0.45908588, -6, -1.1847514, -8, -1.2829596, -10, -0.26003066, -12, 1.4896431, -14, 2.7856796, -16, 2.4499273, -18, 0.25889388)
+points = PackedVector2Array(0, 0, -2, 0.022194726, -4, -0.5420743, -6, -1.1995846, -8, -1.1445411, -10, 0.0057840333, -12, 1.7264831, -14, 2.798558, -16, 2.154649, -18, -0.22053954)
 width = 1.0
 width_curve = SubResource("Curve_167j0")
 script = ExtResource("3_167j0")
-time = 11407.208752151213
+time = 12705.701983143306
 
 [node name="Camera2D" type="Camera2D" parent="HBoxContainer/PreviewVBC/ScarfCenterer/ScarfPreview/SubViewport" unique_id=1526049349]
 

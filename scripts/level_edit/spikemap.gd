@@ -20,18 +20,20 @@ var spikes : Dictionary[Vector2i, Spike]
 func unsigned16_to_signed(unsigned : int) -> int:
 	return (unsigned + MAX_15B) % MAX_16B - MAX_15B
 
-func _init(binary : BinaryReader = null, room_pos := Vector2.ZERO, spike_count : int = 0) -> void:
+func _init(binary : BinaryReader = null, tile_count : Vector2i = Vector2i.ZERO) -> void:
 	if binary == null: return
 	
-	for i : int in spike_count:
-		var x := unsigned16_to_signed(binary.file.get_16()) - room_pos.x / 8
-		var y := unsigned16_to_signed(binary.file.get_16()) - room_pos.y / 8
+	var length : int = tile_count.y * tile_count.x
+	for i : int in length:
 		var mask := binary.file.get_8()
+		if mask == 0: continue
+		
+		var x := i % tile_count.x
+		var y := i / tile_count.x
 		
 		var new_spike := Spike.new(mask)
 		add_child(new_spike)
 		new_spike.set_position_async(x * 8, y * 8)
-		@warning_ignore("narrowing_conversion")
 		spikes[Vector2i(x, y)] = new_spike
 		new_spike.queue_redraw()
 
@@ -90,26 +92,19 @@ func get_colliders() -> Array[Rect2]:
 	
 	return arr
 
-func get_colliders_section(room_pos : Vector2) -> Dictionary:
-	var data := BinarySection.new("SKCL")
+func get_colliders_section(tile_count : Vector2i) -> BinarySection:
+	var section := BinarySection.new("SKCL")
 	
-	var spike_count : int = 0
+	var length : int = tile_count.y * tile_count.x
+	section.resize(length)
 	
 	for pos : Vector2i in spikes.keys():
 		if spikes[pos].mask == 0: continue
 		
-		@warning_ignore("narrowing_conversion")
-		data.push_u16(pos.x + room_pos.x / 8)
-		@warning_ignore("narrowing_conversion")
-		data.push_u16(pos.y + room_pos.y / 8)
-		data.push_u8(spikes[pos].mask)
-		
-		spike_count += 1
+		var byte_index := tile_count.x * pos.y + pos.x
+		section.data.encode_u8(byte_index, spikes[pos].mask)
 	
-	return {
-		"section" : data,
-		"count" : spike_count
-	}
+	return section
 
 func get_tile_section(chunk : Vector2i) -> Dictionary:
 	var data := BinarySection.new("SPIK")

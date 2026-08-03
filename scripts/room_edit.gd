@@ -62,8 +62,8 @@ func _init(tileset : TileSet, room_path : String, assume_empty : bool = false) -
 	
 	position.x = binary.file.get_64()
 	position.y = binary.file.get_64()
-	binary.file.get_16() # width
-	binary.file.get_16() # height
+	var width := binary.file.get_16()
+	var height := binary.file.get_16()
 	target_width = binary.file.get_16()
 	target_height = binary.file.get_16()
 	
@@ -71,7 +71,6 @@ func _init(tileset : TileSet, room_path : String, assume_empty : bool = false) -
 	properties.get_node("ViewHeight").value = target_height
 	
 	var chunk_count := binary.file.get_8()
-	var spike_collider_count := binary.file.get_32()
 	var checkpoint_count := binary.file.get_8()
 	binary.file.get_8() # neighbor count
 	binary.file.get_32() # ledge count
@@ -102,8 +101,10 @@ func _init(tileset : TileSet, room_path : String, assume_empty : bool = false) -
 			
 			set_cell(tile_pos, source_id, atlas_pos)
 	
+	var size_in_tiles := Vector2i(width / 8, height / 8)
+	
 	binary.ensure_section("SKCL")
-	spikemap = SpikeMap.new(binary, position, spike_collider_count)
+	spikemap = SpikeMap.new(binary, size_in_tiles)
 	add_child(spikemap)
 	
 	binary.ensure_section("CKPT")
@@ -173,8 +174,7 @@ func export(project_path : String) -> void:
 		
 		colliders_section.data[byte_index] |= (1 << bit_local_index)
 	
-	var spike_collider_data := spikemap.get_colliders_section(room_rect.position)
-	meta.push_u32(spike_collider_data.count)
+	var spike_collider_data := spikemap.get_colliders_section(tile_count)
 	
 	var checkpoints_section := BinarySection.new("CKPT")
 	for cp : Node2D in checkpoints.get_children():
@@ -227,7 +227,7 @@ func export(project_path : String) -> void:
 		chunk_data[key].spike.write(file)
 	
 	colliders_section.write(file)
-	spike_collider_data.section.write(file)
+	spike_collider_data.write(file)
 	checkpoints_section.write(file)
 	neighbors.write(file)
 	ledges.write(file)

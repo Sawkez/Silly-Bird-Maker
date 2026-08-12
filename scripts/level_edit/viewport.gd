@@ -21,6 +21,10 @@ func _gui_input(event: InputEvent) -> void:
 		
 		elif Input.is_action_pressed("drag"): pass
 		
+		elif current_room < 0: pass
+		elif current_room >= %Rooms.get_child_count(): pass
+		elif current_source == null: pass
+		
 		elif Input.is_action_pressed("paint"):
 			current_source.paint.call(%Rooms.get_child(current_room), %Camera2D.get_global_mouse_position())
 		
@@ -60,6 +64,8 @@ func _gui_input(event: InputEvent) -> void:
 	elif event.is_action("drag"): pass
 	
 	elif current_room < 0: pass
+	elif current_room >= %Rooms.get_child_count(): pass
+	elif current_source == null: pass
 	
 	elif event.is_action("paint"):
 		current_source.paint.call(%Rooms.get_child(current_room), %Camera2D.get_global_mouse_position())

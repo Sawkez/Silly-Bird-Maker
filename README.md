@@ -5,7 +5,8 @@ While the mods it produces can be run on any platform, Silly Bird Maker itself i
 # Implemented
 - Level editor;
 - Custom tilesheets;
-- Skin editor.
+- Skin editor;
+- Exporting .sbsq files.
 
 # Planned features
 - Custom sprites and decals;

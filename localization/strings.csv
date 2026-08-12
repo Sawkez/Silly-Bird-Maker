@@ -7,6 +7,7 @@ mod_name,Mod display name
 levels,Levels:
 skins,Skins:
 save,Save
+export,Export .sbsq file
 fg_tiles,Foreground
 special_tiles,Special
 file,File

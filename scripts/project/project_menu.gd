@@ -145,3 +145,32 @@ func add_level() -> void:
 	add_button(%LevelList, path, path, load_level)
 	%LevelList.move_child(%NewLevel, -1)
 	%NewLevel/LineEdit.text = ""
+
+func _on_export_pressed() -> void:
+	$ExportDialog.show()
+
+func add_dir_to_zip(zip : ZIPPacker, root_path : String, dir_path : String) -> void:
+	var dir := DirAccess.open(root_path + dir_path)
+	dir.list_dir_begin()
+	var entry := dir.get_next()
+	
+	while entry != "":
+		var entry_path := dir_path + "/" + entry
+		if dir.current_is_dir():
+			add_dir_to_zip(zip, root_path, entry_path)
+		
+		else:
+			zip.start_file(entry_path)
+			var bytes := FileAccess.get_file_as_bytes(root_path + entry_path)
+			zip.write_file(bytes)
+			zip.close_file()
+		
+		entry = dir.get_next()
+
+func _on_export_dialog_file_selected(path: String) -> void:
+	var zip := ZIPPacker.new()
+	if zip.open(path, ZIPPacker.APPEND_CREATE) != OK: return
+	
+	add_dir_to_zip(zip, Global.project_path, "")
+	
+	zip.close()

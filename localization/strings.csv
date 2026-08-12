@@ -11,3 +11,6 @@ fg_tiles,Foreground
 special_tiles,Special
 file,File
 save_before_continue,Would you like to save the project before continuing?
+exit_to_project,Exit to project
+import_palette_from_texture,Import palette from texture
+reload_images,Reload images

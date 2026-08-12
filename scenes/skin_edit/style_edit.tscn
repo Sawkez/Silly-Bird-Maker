@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://urudht3l2vue" path="res://scripts/skin_edit/style_edit.gd" id="1_h4at5"]
 [ext_resource type="Shader" uid="uid://dxfsdm6wekaqv" path="res://shaders/SkinPreviewPaletteSwap.gdshader" id="2_h4at5"]
+[ext_resource type="Script" uid="uid://b1k3td43ggqe0" path="res://scripts/skin_edit/menu_bar.gd" id="2_l8dlw"]
 [ext_resource type="Texture2D" uid="uid://jghl6h5yv20r" path="res://graphics/icons/scarf_pin.png" id="3_28akp"]
 [ext_resource type="Script" uid="uid://mkpqwr3i25rm" path="res://scripts/skin_edit/scarf.gd" id="3_167j0"]
 [ext_resource type="Shader" uid="uid://clqfw7fxpv2k2" path="res://shaders/invert_screen_color.gdshader" id="3_dplll"]
@@ -30,7 +31,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_h4at5")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1458149867]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=891765864]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -38,20 +39,44 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PreviewVBC" type="VBoxContainer" parent="HBoxContainer" unique_id=119049540]
+[node name="MenuBar" type="MenuBar" parent="VBoxContainer" unique_id=2098949555]
 layout_mode = 2
-size_flags_horizontal = 3
+script = ExtResource("2_l8dlw")
 
-[node name="PreviewCenterer" type="CenterContainer" parent="HBoxContainer/PreviewVBC" unique_id=1152589906]
+[node name="File" type="PopupMenu" parent="VBoxContainer/MenuBar" unique_id=105336818]
+title = "file"
+item_count = 2
+item_0/text = "save"
+item_0/id = 0
+item_1/text = "exit_to_project"
+item_1/id = 1
+
+[node name="Edit" type="PopupMenu" parent="VBoxContainer/MenuBar" unique_id=1530804141]
+title = "edit"
+item_count = 2
+item_0/text = "import_palette_from_texture"
+item_0/id = 0
+item_1/text = "reload_images"
+item_1/id = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1458149867]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="HBoxContainer/PreviewVBC/PreviewCenterer" unique_id=3236766]
+[node name="PreviewVBC" type="VBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=119049540]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PreviewCenterer" type="CenterContainer" parent="VBoxContainer/HBoxContainer/PreviewVBC" unique_id=1152589906]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control" type="Control" parent="VBoxContainer/HBoxContainer/PreviewVBC/PreviewCenterer" unique_id=3236766]
 custom_minimum_size = Vector2(160, 160)
 custom_maximum_size = Vector2(160, 160)
 layout_mode = 2
 
-[node name="Preview" type="AnimatedSprite2D" parent="HBoxContainer/PreviewVBC/PreviewCenterer/Control" unique_id=796034342]
+[node name="Preview" type="AnimatedSprite2D" parent="VBoxContainer/HBoxContainer/PreviewVBC/PreviewCenterer/Control" unique_id=796034342]
 unique_name_in_owner = true
 texture_filter = 1
 material = SubResource("ShaderMaterial_167j0")
@@ -60,7 +85,7 @@ sprite_frames = SubResource("SpriteFrames_28akp")
 animation = &""
 centered = false
 
-[node name="PreviewScarfOverlay" type="AnimatedSprite2D" parent="HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" unique_id=1805780875]
+[node name="PreviewScarfOverlay" type="AnimatedSprite2D" parent="VBoxContainer/HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" unique_id=1805780875]
 unique_name_in_owner = true
 texture_filter = 1
 scale = Vector2(0.99999994, 0.99999994)
@@ -68,18 +93,18 @@ sprite_frames = SubResource("SpriteFrames_h4at5")
 animation = &""
 centered = false
 
-[node name="Pin" type="Sprite2D" parent="HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" unique_id=217648552]
+[node name="Pin" type="Sprite2D" parent="VBoxContainer/HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" unique_id=217648552]
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_28akp")
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("3_28akp")
 centered = false
 
-[node name="ScarfCenterer" type="CenterContainer" parent="HBoxContainer/PreviewVBC" unique_id=835113462]
+[node name="ScarfCenterer" type="CenterContainer" parent="VBoxContainer/HBoxContainer/PreviewVBC" unique_id=835113462]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ScarfPreview" type="SubViewportContainer" parent="HBoxContainer/PreviewVBC/ScarfCenterer" unique_id=1853502437]
+[node name="ScarfPreview" type="SubViewportContainer" parent="VBoxContainer/HBoxContainer/PreviewVBC/ScarfCenterer" unique_id=1853502437]
 unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(300, 300)
@@ -88,29 +113,29 @@ layout_mode = 2
 stretch = true
 stretch_shrink = 10
 
-[node name="SubViewport" type="SubViewport" parent="HBoxContainer/PreviewVBC/ScarfCenterer/ScarfPreview" unique_id=975612030]
+[node name="SubViewport" type="SubViewport" parent="VBoxContainer/HBoxContainer/PreviewVBC/ScarfCenterer/ScarfPreview" unique_id=975612030]
 handle_input_locally = false
 canvas_item_default_texture_filter = 0
 size = Vector2i(30, 30)
 render_target_update_mode = 4
 
-[node name="Scarf" type="Line2D" parent="HBoxContainer/PreviewVBC/ScarfCenterer/ScarfPreview/SubViewport" unique_id=368740178]
+[node name="Scarf" type="Line2D" parent="VBoxContainer/HBoxContainer/PreviewVBC/ScarfCenterer/ScarfPreview/SubViewport" unique_id=368740178]
 unique_name_in_owner = true
 position = Vector2(10, 0)
-points = PackedVector2Array(0, 0, -2, 0.022194726, -4, -0.5420743, -6, -1.1995846, -8, -1.1445411, -10, 0.0057840333, -12, 1.7264831, -14, 2.798558, -16, 2.154649, -18, -0.22053954)
+points = PackedVector2Array(0, 0, -2, -0.34364983, -4, -0.77254134, -6, -0.5837547, -8, 0.4605338, -10, 1.775067, -12, 2.277282, -14, 1.2169672, -16, -1.098389, -18, -3.286496)
 width = 1.0
 width_curve = SubResource("Curve_167j0")
 script = ExtResource("3_167j0")
-time = 12705.701983143306
+time = 14262.775038581427
 
-[node name="Camera2D" type="Camera2D" parent="HBoxContainer/PreviewVBC/ScarfCenterer/ScarfPreview/SubViewport" unique_id=1526049349]
+[node name="Camera2D" type="Camera2D" parent="VBoxContainer/HBoxContainer/PreviewVBC/ScarfCenterer/ScarfPreview/SubViewport" unique_id=1526049349]
 
-[node name="ShowScarfPin" type="CheckButton" parent="HBoxContainer/PreviewVBC" unique_id=2030088667]
+[node name="ShowScarfPin" type="CheckButton" parent="VBoxContainer/HBoxContainer/PreviewVBC" unique_id=2030088667]
 layout_mode = 2
 button_pressed = true
 text = "show_scarf_pin"
 
-[node name="ScarfVisibility" type="OptionButton" parent="HBoxContainer/PreviewVBC" unique_id=892775257]
+[node name="ScarfVisibility" type="OptionButton" parent="VBoxContainer/HBoxContainer/PreviewVBC" unique_id=892775257]
 unique_name_in_owner = true
 layout_mode = 2
 selected = 2
@@ -122,96 +147,94 @@ popup/item_1/id = 1
 popup/item_2/text = "charged_scarf"
 popup/item_2/id = 2
 
-[node name="AnimationSelect" type="OptionButton" parent="HBoxContainer/PreviewVBC" unique_id=586956059]
+[node name="AnimationSelect" type="OptionButton" parent="VBoxContainer/HBoxContainer/PreviewVBC" unique_id=586956059]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Middle" type="VBoxContainer" parent="HBoxContainer" unique_id=3058611]
+[node name="Middle" type="VBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=3058611]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ColorsLabel" type="Label" parent="HBoxContainer/Middle" unique_id=1436219168]
+[node name="ColorsLabel" type="Label" parent="VBoxContainer/HBoxContainer/Middle" unique_id=1436219168]
 layout_mode = 2
 text = "default_color_palette"
 
-[node name="Colors" type="VBoxContainer" parent="HBoxContainer/Middle" unique_id=631605720]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="ColorPickerButton" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1092734376]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-edit_alpha = false
-edit_intensity = false
-
-[node name="ColorPickerButton2" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1699690643]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-edit_alpha = false
-edit_intensity = false
-
-[node name="ColorPickerButton3" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1834751191]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-edit_alpha = false
-edit_intensity = false
-
-[node name="ColorPickerButton4" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=635555712]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-edit_alpha = false
-edit_intensity = false
-
-[node name="ColorPickerButton5" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=239468283]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-edit_alpha = false
-edit_intensity = false
-
-[node name="ColorPickerButton6" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1376026214]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-edit_alpha = false
-edit_intensity = false
-
-[node name="ColorPickerButton7" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1308383619]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-edit_alpha = false
-edit_intensity = false
-
-[node name="ColorPickerButton8" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=333462702]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-edit_alpha = false
-edit_intensity = false
-
-[node name="ColorPickerButton9" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=1248114427]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-edit_alpha = false
-edit_intensity = false
-
-[node name="ColorPickerButton10" type="ColorPickerButton" parent="HBoxContainer/Middle/Colors" unique_id=774470355]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-edit_alpha = false
-edit_intensity = false
-
-[node name="ImportColors" type="Button" parent="HBoxContainer/Middle" unique_id=226190472]
-layout_mode = 2
-text = "import_colors_from_texture"
-
-[node name="Spacer" type="Control" parent="HBoxContainer/Middle" unique_id=1900383350]
+[node name="ColorScroll" type="ScrollContainer" parent="VBoxContainer/HBoxContainer/Middle" unique_id=1495366668]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ScarfPropertiesLabel" type="Label" parent="HBoxContainer/Middle" unique_id=2078802341]
+[node name="Colors" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/Middle/ColorScroll" unique_id=631605720]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle/ColorScroll/Colors" unique_id=1092734376]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton2" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle/ColorScroll/Colors" unique_id=1699690643]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton3" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle/ColorScroll/Colors" unique_id=1834751191]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton4" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle/ColorScroll/Colors" unique_id=635555712]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton5" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle/ColorScroll/Colors" unique_id=239468283]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton6" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle/ColorScroll/Colors" unique_id=1376026214]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton7" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle/ColorScroll/Colors" unique_id=1308383619]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton8" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle/ColorScroll/Colors" unique_id=333462702]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton9" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle/ColorScroll/Colors" unique_id=1248114427]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ColorPickerButton10" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle/ColorScroll/Colors" unique_id=774470355]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="ScarfPropertiesLabel" type="Label" parent="VBoxContainer/HBoxContainer/Middle" unique_id=2078802341]
 layout_mode = 2
 text = "scarf_properties"
 
-[node name="ScarfSegmentLength" type="SpinBox" parent="HBoxContainer/Middle" unique_id=1177997758]
+[node name="ScarfSegmentLength" type="SpinBox" parent="VBoxContainer/HBoxContainer/Middle" unique_id=1177997758]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
@@ -221,7 +244,7 @@ rounded = true
 prefix = "segment length:"
 suffix = "px"
 
-[node name="ScarfBaseWidth" type="SpinBox" parent="HBoxContainer/Middle" unique_id=1714940828]
+[node name="ScarfBaseWidth" type="SpinBox" parent="VBoxContainer/HBoxContainer/Middle" unique_id=1714940828]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
@@ -231,7 +254,7 @@ rounded = true
 prefix = "base thickness:"
 suffix = "px"
 
-[node name="ScarfTipWidth" type="SpinBox" parent="HBoxContainer/Middle" unique_id=707219680]
+[node name="ScarfTipWidth" type="SpinBox" parent="VBoxContainer/HBoxContainer/Middle" unique_id=707219680]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
@@ -241,7 +264,7 @@ rounded = true
 prefix = "tip thickness:"
 suffix = "px"
 
-[node name="ScarfWeight" type="SpinBox" parent="HBoxContainer/Middle" unique_id=1871112329]
+[node name="ScarfWeight" type="SpinBox" parent="VBoxContainer/HBoxContainer/Middle" unique_id=1871112329]
 unique_name_in_owner = true
 layout_mode = 2
 rounded = true
@@ -249,87 +272,78 @@ prefix = "weight:"
 suffix = "%"
 custom_arrow_step = 20.0
 
-[node name="ChargedScarfColorLabel" type="Label" parent="HBoxContainer/Middle" unique_id=476384155]
+[node name="ChargedScarfColorLabel" type="Label" parent="VBoxContainer/HBoxContainer/Middle" unique_id=476384155]
 layout_mode = 2
 text = "charged_scarf_color"
 
-[node name="ChargedScarfColor" type="ColorPickerButton" parent="HBoxContainer/Middle" unique_id=1921175829]
+[node name="ChargedScarfColor" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle" unique_id=1921175829]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
 
-[node name="EmptyScarfColorLabel2" type="Label" parent="HBoxContainer/Middle" unique_id=77344094]
+[node name="EmptyScarfColorLabel2" type="Label" parent="VBoxContainer/HBoxContainer/Middle" unique_id=77344094]
 layout_mode = 2
 text = "discharged_scarf_color"
 
-[node name="EmptyScarfColor" type="ColorPickerButton" parent="HBoxContainer/Middle" unique_id=1359943071]
+[node name="EmptyScarfColor" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/Middle" unique_id=1359943071]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 edit_alpha = false
 edit_intensity = false
 
-[node name="Properties" type="VBoxContainer" parent="HBoxContainer" unique_id=1862775402]
+[node name="Properties" type="VBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=1862775402]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PropertiesLabel" type="Label" parent="HBoxContainer/Properties" unique_id=122577838]
+[node name="PropertiesLabel" type="Label" parent="VBoxContainer/HBoxContainer/Properties" unique_id=122577838]
 layout_mode = 2
 text = "skin_properties"
 
-[node name="AllowTwerk" type="CheckBox" parent="HBoxContainer/Properties" unique_id=1440035024]
+[node name="AllowTwerk" type="CheckBox" parent="VBoxContainer/HBoxContainer/Properties" unique_id=1440035024]
 unique_name_in_owner = true
 layout_mode = 2
 text = "allow_twerk"
 
-[node name="RunFootstepsLabel" type="Label" parent="HBoxContainer/Properties" unique_id=1236249630]
+[node name="RunFootstepsLabel" type="Label" parent="VBoxContainer/HBoxContainer/Properties" unique_id=1236249630]
 layout_mode = 2
 text = "run_footstep_frames"
 
-[node name="RunFootsteps" type="LineEdit" parent="HBoxContainer/Properties" unique_id=1257497083]
+[node name="RunFootsteps" type="LineEdit" parent="VBoxContainer/HBoxContainer/Properties" unique_id=1257497083]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="SlowRunFootstepsLabel" type="Label" parent="HBoxContainer/Properties" unique_id=1478053832]
+[node name="SlowRunFootstepsLabel" type="Label" parent="VBoxContainer/HBoxContainer/Properties" unique_id=1478053832]
 layout_mode = 2
 text = "slow_run_footstep_frames"
 
-[node name="SlowRunFootsteps" type="LineEdit" parent="HBoxContainer/Properties" unique_id=341073066]
+[node name="SlowRunFootsteps" type="LineEdit" parent="VBoxContainer/HBoxContainer/Properties" unique_id=341073066]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/Properties" unique_id=645719507]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/HBoxContainer/Properties" unique_id=645719507]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="AnimationProperties" type="VBoxContainer" parent="HBoxContainer/Properties/ScrollContainer" unique_id=1470176440]
+[node name="AnimationProperties" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/Properties/ScrollContainer" unique_id=1470176440]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ReloadImages" type="Button" parent="HBoxContainer/Properties" unique_id=1822066018]
-layout_mode = 2
-text = "reload_images"
-
-[node name="Save" type="Button" parent="HBoxContainer/Properties" unique_id=987366858]
-layout_mode = 2
-text = "save"
-
-[connection signal="animation_changed" from="HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" to="." method="_on_preview_frame_changed"]
-[connection signal="frame_changed" from="HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" to="." method="_on_preview_frame_changed"]
-[connection signal="sprite_frames_changed" from="HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" to="." method="_on_preview_frame_changed"]
-[connection signal="toggled" from="HBoxContainer/PreviewVBC/ShowScarfPin" to="." method="_on_show_scarf_pin_toggled"]
-[connection signal="item_selected" from="HBoxContainer/PreviewVBC/ScarfVisibility" to="." method="_on_scarf_visibility_item_selected"]
-[connection signal="item_selected" from="HBoxContainer/PreviewVBC/AnimationSelect" to="." method="_on_animation_select_item_selected"]
-[connection signal="pressed" from="HBoxContainer/Middle/ImportColors" to="." method="_on_import_colors_pressed"]
-[connection signal="value_changed" from="HBoxContainer/Middle/ScarfSegmentLength" to="." method="_on_scarf_segment_length_value_changed"]
-[connection signal="value_changed" from="HBoxContainer/Middle/ScarfBaseWidth" to="." method="_on_scarf_base_width_value_changed"]
-[connection signal="value_changed" from="HBoxContainer/Middle/ScarfTipWidth" to="." method="_on_scarf_tip_width_value_changed"]
-[connection signal="value_changed" from="HBoxContainer/Middle/ScarfWeight" to="." method="_on_scarf_weight_value_changed"]
-[connection signal="color_changed" from="HBoxContainer/Middle/ChargedScarfColor" to="." method="_on_charged_scarf_color_color_changed"]
-[connection signal="color_changed" from="HBoxContainer/Middle/EmptyScarfColor" to="." method="_on_empty_scarf_color_color_changed"]
-[connection signal="pressed" from="HBoxContainer/Properties/ReloadImages" to="." method="_on_reload_images_pressed"]
-[connection signal="pressed" from="HBoxContainer/Properties/Save" to="." method="_on_save_pressed"]
+[connection signal="id_pressed" from="VBoxContainer/MenuBar/File" to="VBoxContainer/MenuBar" method="_on_file_id_pressed"]
+[connection signal="id_pressed" from="VBoxContainer/MenuBar/Edit" to="VBoxContainer/MenuBar" method="_on_edit_id_pressed"]
+[connection signal="animation_changed" from="VBoxContainer/HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" to="." method="_on_preview_frame_changed"]
+[connection signal="frame_changed" from="VBoxContainer/HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" to="." method="_on_preview_frame_changed"]
+[connection signal="sprite_frames_changed" from="VBoxContainer/HBoxContainer/PreviewVBC/PreviewCenterer/Control/Preview" to="." method="_on_preview_frame_changed"]
+[connection signal="toggled" from="VBoxContainer/HBoxContainer/PreviewVBC/ShowScarfPin" to="." method="_on_show_scarf_pin_toggled"]
+[connection signal="item_selected" from="VBoxContainer/HBoxContainer/PreviewVBC/ScarfVisibility" to="." method="_on_scarf_visibility_item_selected"]
+[connection signal="item_selected" from="VBoxContainer/HBoxContainer/PreviewVBC/AnimationSelect" to="." method="_on_animation_select_item_selected"]
+[connection signal="value_changed" from="VBoxContainer/HBoxContainer/Middle/ScarfSegmentLength" to="." method="_on_scarf_segment_length_value_changed"]
+[connection signal="value_changed" from="VBoxContainer/HBoxContainer/Middle/ScarfBaseWidth" to="." method="_on_scarf_base_width_value_changed"]
+[connection signal="value_changed" from="VBoxContainer/HBoxContainer/Middle/ScarfTipWidth" to="." method="_on_scarf_tip_width_value_changed"]
+[connection signal="value_changed" from="VBoxContainer/HBoxContainer/Middle/ScarfWeight" to="." method="_on_scarf_weight_value_changed"]
+[connection signal="color_changed" from="VBoxContainer/HBoxContainer/Middle/ChargedScarfColor" to="." method="_on_charged_scarf_color_color_changed"]
+[connection signal="color_changed" from="VBoxContainer/HBoxContainer/Middle/EmptyScarfColor" to="." method="_on_empty_scarf_color_color_changed"]

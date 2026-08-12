@@ -38,6 +38,9 @@ func _ready() -> void:
 					break
 		
 		add_button(%SkinList, skin_name, path, load_skin)
+	
+	%LevelList.move_child(%NewLevel, -1)
+	%SkinList.move_child(%NewSkin, -1)
 
 func add_button(parent : Node, button_name : String, path : String, callback : Callable) -> void:
 	var new_button : HBoxContainer = LEVEL_BUTTON_SCENE.instantiate()
@@ -121,3 +124,17 @@ func _on_save_pressed() -> void:
 	var file := FileAccess.open(Global.project_path + "/mod.json", FileAccess.WRITE)
 	file.store_string(json)
 	file.close()
+
+func add_skin() -> void:
+	var path : String = %NewSkin/LineEdit.text
+	DirAccess.make_dir_absolute(Global.project_path + "/skins/" + path)
+	add_button(%SkinList, path, path, load_skin)
+	%SkinList.move_child(%NewSkin, -1)
+	%NewSkin/LineEdit.text = ""
+
+func add_level() -> void:
+	var path : String = %NewLevel/LineEdit.text
+	DirAccess.make_dir_absolute(Global.project_path + "/levels/" + path)
+	add_button(%LevelList, path, path, load_level)
+	%LevelList.move_child(%NewLevel, -1)
+	%NewLevel/LineEdit.text = ""

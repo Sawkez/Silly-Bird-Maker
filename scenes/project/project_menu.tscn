@@ -49,6 +49,19 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="NewLevel" type="HBoxContainer" parent="Levels/LevelScroll/LevelList" unique_id=752522040]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="Levels/LevelScroll/LevelList/NewLevel" unique_id=1368394160]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "new_level_path"
+
+[node name="Button" type="Button" parent="Levels/LevelScroll/LevelList/NewLevel" unique_id=398119227]
+layout_mode = 2
+text = "add"
+
 [node name="Skins" type="VBoxContainer" parent="." unique_id=1305367085]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -67,4 +80,19 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="NewSkin" type="HBoxContainer" parent="Skins/SkinScroll/SkinList" unique_id=2023380907]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="Skins/SkinScroll/SkinList/NewSkin" unique_id=1244576508]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "new_skin_path"
+
+[node name="Button" type="Button" parent="Skins/SkinScroll/SkinList/NewSkin" unique_id=2081373400]
+layout_mode = 2
+text = "add"
+
 [connection signal="pressed" from="Properties/Save" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="Levels/LevelScroll/LevelList/NewLevel/Button" to="." method="add_level"]
+[connection signal="pressed" from="Skins/SkinScroll/SkinList/NewSkin/Button" to="." method="add_skin"]

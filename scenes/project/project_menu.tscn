@@ -93,6 +93,15 @@ placeholder_text = "new_skin_path"
 layout_mode = 2
 text = "add"
 
+[node name="SaveConfirm" type="ConfirmationDialog" parent="." unique_id=1842021787]
+unique_name_in_owner = true
+oversampling_override = 1.0
+initial_position = 2
+ok_button_text = "Yes"
+dialog_text = "save_before_continue"
+cancel_button_text = "No"
+
 [connection signal="pressed" from="Properties/Save" to="." method="_on_save_pressed"]
 [connection signal="pressed" from="Levels/LevelScroll/LevelList/NewLevel/Button" to="." method="add_level"]
 [connection signal="pressed" from="Skins/SkinScroll/SkinList/NewSkin/Button" to="." method="add_skin"]
+[connection signal="confirmed" from="SaveConfirm" to="." method="_on_save_pressed"]

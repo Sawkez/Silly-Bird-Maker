@@ -50,6 +50,8 @@ func add_button(parent : Node, button_name : String, path : String, callback : C
 	new_button.path = path
 
 func load_level(path : String) -> void:
+	%SaveConfirm.show()
+	await %SaveConfirm.visibility_changed
 	
 	# loading tileset
 	Global.tile_set = load("res://resources/tileset_templates.tres").duplicate()
@@ -97,6 +99,9 @@ func load_level(path : String) -> void:
 	get_tree().change_scene_to_file("res://scenes/level_edit.tscn")
 
 func load_skin(path : String) -> void:
+	%SaveConfirm.show()
+	await %SaveConfirm.visibility_changed
+	
 	Global.subproject_path = Global.project_path + "/skins/" + path
 	get_tree().change_scene_to_file("res://scenes/skin_edit/style_edit.tscn")
 
@@ -109,12 +114,14 @@ func _on_save_pressed() -> void:
 	}
 	
 	for button : HBoxContainer in %LevelList.get_children():
+		if button == %NewLevel: continue
 		properties.levels.append({
 			"path" : button.path,
 			"name" : button.get_child(0).text
 		})
 	
 	for button : HBoxContainer in %SkinList.get_children():
+		if button == %NewSkin: continue
 		properties.skins.append({
 			"path" : button.path,
 			"name" : button.get_child(0).text

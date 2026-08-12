@@ -10,3 +10,4 @@ save,Save
 fg_tiles,Foreground
 special_tiles,Special
 file,File
+save_before_continue,Would you like to save the project before continuing?

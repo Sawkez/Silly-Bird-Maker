@@ -45,3 +45,9 @@ func _input(event : InputEvent) -> void:
 
 func _process(_delta : float) -> void:
 	if dragged: get_parent().global_position = LevelEdit.snap_to_grid(get_global_mouse_position() + drag_offset)
+
+func delete_parent() -> void:
+	if get_parent().has_method("delete"):
+		get_parent().delete()
+		var left_panel := Global.level_edit.get_node("%LeftPanel")
+		left_panel.get_child(0).queue_free()

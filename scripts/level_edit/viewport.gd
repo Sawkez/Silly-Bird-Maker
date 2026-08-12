@@ -77,9 +77,9 @@ func _gui_input(event: InputEvent) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action("delete") and not event.echo and event.is_pressed():
-		print("deleding ", current_room)
-		%Rooms.get_child(current_room).free()
-		current_room = min(current_room, %Rooms.get_child_count() - 1)
+		if level_edit.last_dragged_node == null: return
+		if not level_edit.last_dragged_node.is_inside_tree(): return
+		level_edit.last_dragged_node.delete_parent()
 
 func zoom(zoom_in : bool) -> void:
 	var speed : float = ZOOM_SPEED

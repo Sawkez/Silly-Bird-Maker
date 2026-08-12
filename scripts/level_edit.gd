@@ -7,7 +7,14 @@ const DEFAULT_TILESHEETS := "res://graphics/tiles/fg/"
 const PROJECT_TILESHEETS := "tiles/fg/"
 const PROPERTIES_FILENAME := "level.json"
 
-var dragged_node : Drag = null
+var last_dragged_node : Drag = null
+var dragged_node : Drag = null:
+	set(v):
+		dragged_node = v
+		if v == null: return
+		last_dragged_node = v
+
+@onready var viewport : Control = %Viewport
 
 func _ready() -> void:
 	Global.level_edit = self

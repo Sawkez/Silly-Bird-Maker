@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://f8yqywyp03cx"]
+[gd_scene format=3 uid="uid://f8yqywyp03cx"]
 
 [ext_resource type="Script" uid="uid://8oxv8xmq6awf" path="res://scripts/main_menu.gd" id="1_l6cm7"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=2102778184]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_l6cm7")
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1798468546]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,12 +19,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Project" type="Button" parent="CenterContainer"]
+[node name="Project" type="Button" parent="CenterContainer" unique_id=167595217]
 layout_mode = 2
 text = "select_project"
 
-[node name="ProjectDirectorySelection" type="FileDialog" parent="."]
-title = "Open Project Directory"
+[node name="ProjectDirectorySelection" type="FileDialog" parent="." unique_id=1283849796]
+title = "Open a Directory"
 dialog_hide_on_ok = true
 file_mode = 2
 access = 2

@@ -13,8 +13,8 @@ script = ExtResource("1_x06vq")
 [node name="Name" type="LineEdit" parent="." unique_id=2017682147]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "level_name"
-placeholder_text = "level_name"
+text = "display_name"
+placeholder_text = "display_name"
 
 [node name="Edit" type="Button" parent="." unique_id=884547936]
 layout_mode = 2

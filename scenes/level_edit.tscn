@@ -73,13 +73,14 @@ layout_mode = 2
 script = ExtResource("3_fc405")
 
 [node name="File" type="PopupMenu" parent="UI/Control/VBoxContainer/MenuBar" unique_id=2010934575]
-title = "File"
+title = "file"
 prefer_native_menu = true
 item_count = 1
-item_0/text = "Export"
+item_0/text = "save"
 item_0/id = 0
 
 [node name="Edit" type="PopupMenu" parent="UI/Control/VBoxContainer/MenuBar" unique_id=851532185]
+title = "edit"
 prefer_native_menu = true
 item_count = 1
 item_0/text = "add_upgrade_pickup"
@@ -110,12 +111,15 @@ layout_mode = 2
 layout_mode = 2
 current_tab = 0
 clip_tabs = false
+tab_0/title = "fg_tiles"
+tab_1/title = "special_tiles"
 
 [node name="FGTileScroll" type="ScrollContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer" unique_id=335720238]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 metadata/_tab_index = 0
+metadata/_tab_name = "fg_tiles"
 
 [node name="FGTileSelection" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer/FGTileScroll" unique_id=1505175621]
 unique_name_in_owner = true
@@ -127,6 +131,7 @@ layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 metadata/_tab_index = 1
+metadata/_tab_name = "special_tiles"
 
 [node name="SpecialTileSelection" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer/SpecialTileScroll" unique_id=610512427]
 layout_mode = 2

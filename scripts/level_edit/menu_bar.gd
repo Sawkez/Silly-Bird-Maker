@@ -1,12 +1,12 @@
 extends MenuBar
 
-enum FileOption {EXPORT}
+enum FileOption {SAVE}
 enum EditOption {ADD_UPGRADE_PICKUP}
 
 @onready var level_edit : LevelEdit = get_node("/root/LevelEdit")
 
 func _on_file_id_pressed(id: int) -> void:
-	if id == FileOption.EXPORT:
+	if id == FileOption.SAVE:
 		level_edit.export()
 
 func _on_edit_id_pressed(id: int) -> void:

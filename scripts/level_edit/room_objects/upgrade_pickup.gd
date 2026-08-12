@@ -34,4 +34,4 @@ func export() -> BinarySection:
 func set_upgrade(new_upgrade : int = 0) -> void:
 	upgrade = new_upgrade as Upgrade
 	texture = load("res://graphics/upgrades/%s.png" % upgrade_names[upgrade])
-	properties.get_node("Upgrade").selected = -1
+	properties.get_node("Upgrade").selected = properties.get_node("Upgrade").item_count - 1

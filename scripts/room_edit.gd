@@ -432,3 +432,8 @@ func checkpoint_count_changed(value : int) -> void:
 
 func add_object(object : RoomObject) -> void:
 	room_objects.add_child(object)
+
+func delete() -> void:
+	var vp := Global.level_edit.viewport
+	vp.current_room = min(vp.current_room, get_parent().get_child_count() - 1)
+	queue_free()

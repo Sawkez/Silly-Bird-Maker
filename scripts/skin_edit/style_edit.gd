@@ -1,4 +1,5 @@
 extends Control
+class_name StyleEdit
 
 enum {SCARF_HIDDEN, SCARF_EMPTY, SCARF_CHARGED}
 const ANIMATION_NAMES : PackedStringArray = ["duck", "fly", "idle", "jump", "ledge_flip", "ledge_unflip", "run", "slow_run", "slide", "twerk_down", "twerk_up", "wallrun"]
@@ -84,7 +85,7 @@ func _ready() -> void:
 		]
 	}
 	
-	var json_path := Global.project_path + "/skin.json"
+	var json_path := Global.subproject_path + "/skin.json"
 	if FileAccess.file_exists(json_path):
 		json = JSON.parse_string(FileAccess.get_file_as_string(json_path))
 	
@@ -164,7 +165,7 @@ func load_textures() -> void:
 		# we're gonna do something REALLY FUNNY:
 		
 		# read PNG directly into binary
-		var png := FileAccess.get_file_as_bytes(Global.project_path + "/%s.png" % anim)
+		var png := FileAccess.get_file_as_bytes(Global.subproject_path + "/%s.png" % anim)
 		if png.is_empty():
 			textures.append(Texture2D.new())
 			continue
@@ -203,13 +204,13 @@ func load_textures() -> void:
 		image.load_png_from_buffer(png)
 		textures.append(ImageTexture.create_from_image(image))
 		
-		var scarf_image := Image.load_from_file("%s/scarf/%s.png" % [Global.project_path, anim])
+		var scarf_image := Image.load_from_file("%s/scarf/%s.png" % [Global.subproject_path, anim])
 		scarf_textures.append(ImageTexture.create_from_image(scarf_image))
 		
 		# importing scarf positions
 		scarf_positions[anim] = []
 		
-		var scarf_pos_image := Image.load_from_file("%s/pin/%s.png" % [Global.project_path, anim])
+		var scarf_pos_image := Image.load_from_file("%s/pin/%s.png" % [Global.subproject_path, anim])
 		if not scarf_pos_image: continue
 		
 		for frame_row : int in scarf_pos_image.get_size().y / 16:
@@ -282,9 +283,6 @@ func _on_animation_select_item_selected(index: int) -> void:
 	%Preview.play(ANIMATION_NAMES[index])
 	%PreviewScarfOverlay.play(ANIMATION_NAMES[index])
 
-func update_scarf_visibility() -> void:
-	pass
-
 func _on_scarf_segment_length_value_changed(value: float) -> void:
 	%Scarf.segment_length = value
 	var shrink : float = 10
@@ -333,15 +331,12 @@ func _on_preview_frame_changed() -> void:
 func _on_show_scarf_pin_toggled(toggled_on: bool) -> void:
 	%Pin.visible = toggled_on
 
-func _on_reload_images_pressed() -> void:
-	load_textures()
-
-func _on_import_colors_pressed() -> void:
+func import_colors() -> void:
 	var palette : PackedColorArray = []
 	palette.resize(COLOR_COUNT)
 	palette.fill(Color.BLACK)
 	
-	var png := FileAccess.get_file_as_bytes("%s/run.png" % Global.project_path)
+	var png := FileAccess.get_file_as_bytes("%s/run.png" % Global.subproject_path)
 	if png.is_empty(): return
 	
 	var chunk := find_palette_chunk(png)
@@ -355,7 +350,7 @@ func _on_import_colors_pressed() -> void:
 	
 	update_palette()
 
-func _on_save_pressed() -> void:
+func save() -> void:
 	var json := {
 		"allow_twerk" : %AllowTwerk.button_pressed,
 		"animations" : [],
@@ -406,6 +401,6 @@ func _on_save_pressed() -> void:
 		
 		json.scarf_positions.append(positions)
 	
-	var f := FileAccess.open("%s/skin.json" % Global.project_path, FileAccess.WRITE)
+	var f := FileAccess.open("%s/skin.json" % Global.subproject_path, FileAccess.WRITE)
 	f.store_string(JSON.stringify(json))
 	f.close()

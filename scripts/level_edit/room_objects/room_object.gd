@@ -23,3 +23,6 @@ static func make_room_object(binary : BinaryReader) -> RoomObject:
 	if type == ObjectType.UPGRADE_PICKUP: return UpgradePickup.new(binary)
 	
 	return null
+
+func delete() -> void:
+	queue_free()

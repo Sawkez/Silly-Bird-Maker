@@ -1,6 +1,9 @@
 extends Node
 
-var project_path := "/home/sokz/projects/test-sbmaker-project/"
+const TILE_SIZE := 8
+
+var project_path := ""
+var subproject_path := ""
 
 var level_edit : LevelEdit
 var tile_set : TileSet

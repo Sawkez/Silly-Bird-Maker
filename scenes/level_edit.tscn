@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://3ehw674ejvis" path="res://scenes/level_edit/drag.tscn" id="3_2dtcn"]
 [ext_resource type="Script" uid="uid://evvt6eol7i75" path="res://scripts/level_edit/viewport.gd" id="3_7plft"]
 [ext_resource type="Script" uid="uid://cx0rvu52c4o7p" path="res://scripts/level_edit/menu_bar.gd" id="3_fc405"]
+[ext_resource type="Script" uid="uid://dbt5tu4ap35ej" path="res://scripts/level_edit/player_spawn.gd" id="5_pvx1w"]
 [ext_resource type="Texture2D" uid="uid://cfxvl7ratr3x5" path="res://graphics/icons/player.png" id="6_0ona1"]
 [ext_resource type="Script" uid="uid://dh5d7i3g1jtau" path="res://scripts/level_edit/special_tile_selection.gd" id="8_ll51p"]
 [ext_resource type="Script" uid="uid://cnut2cbteepg6" path="res://scripts/level_edit/tile_set.gd" id="8_rlj5u"]
@@ -44,6 +45,7 @@ editor_draw_screen = false
 position = Vector2(16, 16)
 texture = ExtResource("6_0ona1")
 offset = Vector2(0, -8)
+script = ExtResource("5_pvx1w")
 
 [node name="Drag" parent="PlayerSpawn" unique_id=684247230 instance=ExtResource("3_2dtcn")]
 position = Vector2(0, -8)
@@ -73,13 +75,18 @@ layout_mode = 2
 script = ExtResource("3_fc405")
 
 [node name="File" type="PopupMenu" parent="UI/Control/VBoxContainer/MenuBar" unique_id=2010934575]
-title = "File"
+title = "file"
 prefer_native_menu = true
-item_count = 1
-item_0/text = "Export"
+item_count = 2
+item_0/text = "save"
 item_0/id = 0
+item_1/text = "exit_to_project"
+item_1/id = 1
 
 [node name="Edit" type="PopupMenu" parent="UI/Control/VBoxContainer/MenuBar" unique_id=851532185]
+oversampling_override = 1.0
+title = "edit"
+size = Vector2i(199, 100)
 prefer_native_menu = true
 item_count = 1
 item_0/text = "add_upgrade_pickup"
@@ -110,12 +117,15 @@ layout_mode = 2
 layout_mode = 2
 current_tab = 0
 clip_tabs = false
+tab_0/title = "fg_tiles"
+tab_1/title = "special_tiles"
 
 [node name="FGTileScroll" type="ScrollContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer" unique_id=335720238]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 metadata/_tab_index = 0
+metadata/_tab_name = "fg_tiles"
 
 [node name="FGTileSelection" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer/FGTileScroll" unique_id=1505175621]
 unique_name_in_owner = true
@@ -127,6 +137,7 @@ layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 metadata/_tab_index = 1
+metadata/_tab_name = "special_tiles"
 
 [node name="SpecialTileSelection" type="VBoxContainer" parent="UI/Control/VBoxContainer/HBoxContainer/RightPanel/TabContainer/SpecialTileScroll" unique_id=610512427]
 layout_mode = 2

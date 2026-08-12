@@ -10,6 +10,68 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_8b0u4")
 
+[node name="Levels" type="VBoxContainer" parent="." unique_id=1570086843]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LevelsLabel" type="Label" parent="Levels" unique_id=517194200]
+layout_mode = 2
+text = "levels"
+
+[node name="LevelScroll" type="ScrollContainer" parent="Levels" unique_id=1178638470]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LevelList" type="VBoxContainer" parent="Levels/LevelScroll" unique_id=1055623617]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="NewLevel" type="HBoxContainer" parent="Levels/LevelScroll/LevelList" unique_id=752522040]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="Levels/LevelScroll/LevelList/NewLevel" unique_id=1368394160]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "new_level_path"
+
+[node name="Button" type="Button" parent="Levels/LevelScroll/LevelList/NewLevel" unique_id=398119227]
+layout_mode = 2
+text = "add"
+
+[node name="Skins" type="VBoxContainer" parent="." unique_id=1305367085]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SkinsLabel" type="Label" parent="Skins" unique_id=399692125]
+layout_mode = 2
+text = "skins"
+
+[node name="SkinScroll" type="ScrollContainer" parent="Skins" unique_id=1240805634]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SkinList" type="VBoxContainer" parent="Skins/SkinScroll" unique_id=706535321]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="NewSkin" type="HBoxContainer" parent="Skins/SkinScroll/SkinList" unique_id=2023380907]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="Skins/SkinScroll/SkinList/NewSkin" unique_id=1244576508]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "new_skin_path"
+
+[node name="Button" type="Button" parent="Skins/SkinScroll/SkinList/NewSkin" unique_id=2081373400]
+layout_mode = 2
+text = "add"
+
 [node name="Properties" type="VBoxContainer" parent="." unique_id=1873213233]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -31,40 +93,15 @@ size_flags_vertical = 3
 layout_mode = 2
 text = "save"
 
-[node name="Levels" type="VBoxContainer" parent="." unique_id=1570086843]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="LevelsLabel" type="Label" parent="Levels" unique_id=517194200]
-layout_mode = 2
-text = "levels"
-
-[node name="LevelScroll" type="ScrollContainer" parent="Levels" unique_id=1178638470]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="LevelList" type="VBoxContainer" parent="Levels/LevelScroll" unique_id=1055623617]
+[node name="SaveConfirm" type="ConfirmationDialog" parent="." unique_id=1842021787]
 unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+oversampling_override = 1.0
+initial_position = 2
+ok_button_text = "Yes"
+dialog_text = "save_before_continue"
+cancel_button_text = "No"
 
-[node name="Skins" type="VBoxContainer" parent="." unique_id=1305367085]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="SkinsLabel" type="Label" parent="Skins" unique_id=399692125]
-layout_mode = 2
-text = "skins"
-
-[node name="SkinScroll" type="ScrollContainer" parent="Skins" unique_id=1240805634]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="SkinList" type="VBoxContainer" parent="Skins/SkinScroll" unique_id=706535321]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
+[connection signal="pressed" from="Levels/LevelScroll/LevelList/NewLevel/Button" to="." method="add_level"]
+[connection signal="pressed" from="Skins/SkinScroll/SkinList/NewSkin/Button" to="." method="add_skin"]
 [connection signal="pressed" from="Properties/Save" to="." method="_on_save_pressed"]
+[connection signal="confirmed" from="SaveConfirm" to="." method="_on_save_pressed"]

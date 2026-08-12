@@ -14,6 +14,8 @@ var current_source : TileSetButton = null
 func _ready() -> void:
 	current_room = -1
 
+var last_paint_tile : Vector2i
+
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		if Input.is_action_pressed("pan"):
@@ -21,11 +23,14 @@ func _gui_input(event: InputEvent) -> void:
 		
 		elif Input.is_action_pressed("drag"): pass
 		
-		elif Input.is_action_pressed("paint"):
-			current_source.paint.call(%Rooms.get_child(current_room), %Camera2D.get_global_mouse_position())
+		elif current_room < 0: pass
+		elif current_room >= %Rooms.get_child_count(): pass
+		elif current_source == null: pass
 		
+		elif Input.is_action_pressed("paint"):
+			stroke(event, current_source.paint)
 		elif Input.is_action_pressed("erase"):
-			current_source.erase.call(%Rooms.get_child(current_room), %Camera2D.get_global_mouse_position())
+			stroke(event, current_source.erase)
 	
 	elif not event.is_pressed(): return
 	
@@ -50,7 +55,7 @@ func _gui_input(event: InputEvent) -> void:
 		
 		var new_room := RoomEdit.make_empty(
 			Global.tile_set, 
-			Global.project_path + "/rooms/%s" % %Rooms.get_child_count(), 
+			Global.subproject_path + "/rooms/%s" % %Rooms.get_child_count(), 
 			LevelEdit.snap_to_grid(%Camera2D.get_global_mouse_position())
 		)
 		
@@ -60,6 +65,8 @@ func _gui_input(event: InputEvent) -> void:
 	elif event.is_action("drag"): pass
 	
 	elif current_room < 0: pass
+	elif current_room >= %Rooms.get_child_count(): pass
+	elif current_source == null: pass
 	
 	elif event.is_action("paint"):
 		current_source.paint.call(%Rooms.get_child(current_room), %Camera2D.get_global_mouse_position())
@@ -69,11 +76,31 @@ func _gui_input(event: InputEvent) -> void:
 		current_source.erase.call(%Rooms.get_child(current_room), %Camera2D.get_global_mouse_position())
 		#%Rooms.get_child(current_room).erase_tile(%Camera2D.get_global_mouse_position())
 
+func stroke(event: InputEventMouseMotion, action: Callable) -> void:
+	var room := %Rooms.get_child(current_room)
+	var current_pos: Vector2 = %Camera2D.get_global_mouse_position()
+	# world-space delta this frame (screen_relative is in screen px, so divide by zoom)
+	var world_delta: Vector2 = event.screen_relative / %Camera2D.zoom
+	var start_pos: Vector2 = current_pos - world_delta
+
+	# how many steps to take so we don't skip a tile: step every ~half tile
+	var dist := world_delta.length()
+	var steps := maxi(1, ceili(dist / (Global.TILE_SIZE * 0.5)))
+
+	for i in range(steps + 1):
+		var t := float(i) / float(steps)
+		var pos := start_pos.lerp(current_pos, t)
+		var tile := Vector2i(floori(pos.x / Global.TILE_SIZE), floori(pos.y / Global.TILE_SIZE))
+
+		if tile != last_paint_tile:
+			action.call(room, pos)
+			last_paint_tile = tile
+
 func _input(event: InputEvent) -> void:
 	if event.is_action("delete") and not event.echo and event.is_pressed():
-		print("deleding ", current_room)
-		%Rooms.get_child(current_room).free()
-		current_room = min(current_room, %Rooms.get_child_count() - 1)
+		if level_edit.last_dragged_node == null: return
+		if not level_edit.last_dragged_node.is_inside_tree(): return
+		level_edit.last_dragged_node.delete_parent()
 
 func zoom(zoom_in : bool) -> void:
 	var speed : float = ZOOM_SPEED

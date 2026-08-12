@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://dtta7b38bxqvf"]
+
+[node name="RoomProperties" type="VBoxContainer" unique_id=322758847]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StartingUpgradeLabel" type="Label" parent="." unique_id=1706658694]
+layout_mode = 2
+text = "starting_upgrades"
+
+[node name="StartingUpgrades" type="VBoxContainer" parent="." unique_id=1694141716]
+layout_mode = 2
+
+[node name="Dive" type="CheckBox" parent="StartingUpgrades" unique_id=1070685414]
+layout_mode = 2
+text = "dive"
+
+[node name="Dash" type="CheckBox" parent="StartingUpgrades" unique_id=471116635]
+layout_mode = 2
+text = "dash"
+
+[node name="Slide" type="CheckBox" parent="StartingUpgrades" unique_id=1753396194]
+layout_mode = 2
+text = "slide"
+
+[node name="Diveboost" type="CheckBox" parent="StartingUpgrades" unique_id=1615329118]
+layout_mode = 2
+text = "diveboost"
+
+[node name="Rejuvenator" type="CheckBox" parent="StartingUpgrades" unique_id=2092083249]
+layout_mode = 2
+text = "rejuvenator"
+
+[node name="Wallrun" type="CheckBox" parent="StartingUpgrades" unique_id=1524106595]
+layout_mode = 2
+text = "wallrun"

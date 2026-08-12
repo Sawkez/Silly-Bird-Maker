@@ -54,7 +54,7 @@ func _gui_input(event: InputEvent) -> void:
 		
 		var new_room := RoomEdit.make_empty(
 			Global.tile_set, 
-			Global.project_path + "/rooms/%s" % %Rooms.get_child_count(), 
+			Global.subproject_path + "/rooms/%s" % %Rooms.get_child_count(), 
 			LevelEdit.snap_to_grid(%Camera2D.get_global_mouse_position())
 		)
 		

@@ -90,11 +90,11 @@ func load_level(path : String) -> void:
 			
 			Global.tile_names.append(sheet)
 	
-	Global.project_path += "/levels/" + path
+	Global.subproject_path = Global.project_path + "/levels/" + path
 	get_tree().change_scene_to_file("res://scenes/level_edit.tscn")
 
 func load_skin(path : String) -> void:
-	Global.project_path += "/skins/" + path
+	Global.subproject_path = Global.project_path + "/skins/" + path
 	get_tree().change_scene_to_file("res://scenes/skin_edit/style_edit.tscn")
 
 func _on_save_pressed() -> void:

@@ -73,6 +73,7 @@ drag={
 
 [internationalization]
 
+locale/translations=PackedStringArray("res://localization/strings.en.translation")
 locale/translation_add_builtin_strings_to_pot=true
 
 [rendering]

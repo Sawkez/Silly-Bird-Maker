@@ -1,6 +1,8 @@
 # Silly Bird Maker
 Silly Bird Maker is the official modding toolkit for [Silly Bird Sidequest](https://github.com/Sawkez/Silly-Bird-Sidequest).
-While the mods it produces can be run on any platform, Silly Bird Maker itself is Windows and Linux only.
+While the mods it produces can be run on any platform, Silly Bird Maker itself is Windows and Linux only.  
+
+See the [Wiki](https://github.com/Sawkez/Silly-Bird-Maker/wiki) to get started!
 
 # Implemented
 - Level editor;

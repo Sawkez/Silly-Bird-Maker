@@ -1,5 +1,7 @@
 extends Node
 
+const TILE_SIZE := 8
+
 var project_path := ""
 var subproject_path := ""
 

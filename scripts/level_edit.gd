@@ -37,6 +37,8 @@ func _ready() -> void:
 	$PlayerSpawn.global_position.x = properties.player_x
 	$PlayerSpawn.global_position.y = properties.player_y
 	
+	$PlayerSpawn.set_upgrades(properties.get("starting_upgrades", 0))
+	
 	for i : int in properties.room_count:
 		var new_room := RoomEdit.new(Global.tile_set, Global.subproject_path + "/rooms/%s.room" % i)
 		$Rooms.add_child(new_room)
@@ -70,7 +72,8 @@ func export() -> void:
 		"room_count" : $Rooms.get_child_count(),
 		"starting_room" : starting_room,
 		"player_x" : $PlayerSpawn.position.x,
-		"player_y" : $PlayerSpawn.position.y
+		"player_y" : $PlayerSpawn.position.y,
+		"starting_upgrades" : $PlayerSpawn.get_upgrades()
 	}
 	
 	var f := FileAccess.open(Global.subproject_path + "/" + PROPERTIES_FILENAME, FileAccess.WRITE)

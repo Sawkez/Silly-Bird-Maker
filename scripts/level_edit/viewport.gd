@@ -90,7 +90,7 @@ func stroke(event: InputEventMouseMotion, action: Callable) -> void:
 	for i in range(steps + 1):
 		var t := float(i) / float(steps)
 		var pos := start_pos.lerp(current_pos, t)
-		var tile := Vector2i(floori(pos.x / Global.TILE_SIZE), floori(pos.y / Global.TILE_SIZE))
+		var tile := Vector2i(floori(pos.x), floori(pos.y))
 
 		if tile != last_paint_tile:
 			action.call(room, pos)

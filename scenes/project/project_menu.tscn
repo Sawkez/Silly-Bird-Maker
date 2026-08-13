@@ -105,15 +105,8 @@ ok_button_text = "Yes"
 dialog_text = "save_before_continue"
 cancel_button_text = "No"
 
-[node name="ExportDialog" type="FileDialog" parent="." unique_id=1822359727]
-initial_position = 2
-size = Vector2i(640, 640)
-access = 2
-filters = PackedStringArray("*.sbsq")
-
 [connection signal="pressed" from="Levels/LevelScroll/LevelList/NewLevel/Button" to="." method="add_level"]
 [connection signal="pressed" from="Skins/SkinScroll/SkinList/NewSkin/Button" to="." method="add_skin"]
 [connection signal="pressed" from="Properties/Save" to="." method="_on_save_pressed"]
 [connection signal="pressed" from="Properties/Export" to="." method="_on_export_pressed"]
 [connection signal="confirmed" from="SaveConfirm" to="." method="_on_save_pressed"]
-[connection signal="file_selected" from="ExportDialog" to="." method="_on_export_dialog_file_selected"]

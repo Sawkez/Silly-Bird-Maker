@@ -19,9 +19,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Project" type="Button" parent="CenterContainer" unique_id=167595217]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1768519133]
+layout_mode = 2
+
+[node name="Project" type="Button" parent="CenterContainer/VBoxContainer" unique_id=167595217]
 layout_mode = 2
 text = "select_project"
+
+[node name="Sidequest" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1618864980]
+layout_mode = 2
+text = "select_sidequest"
 
 [node name="ProjectDirectorySelection" type="FileDialog" parent="." unique_id=1283849796]
 title = "Open a Directory"
@@ -31,5 +38,24 @@ dialog_hide_on_ok = true
 file_mode = 2
 access = 2
 
-[connection signal="pressed" from="CenterContainer/Project" to="ProjectDirectorySelection" method="show"]
+[node name="SidequestSelection" type="FileDialog" parent="." unique_id=685776311]
+title = "Open a File"
+initial_position = 2
+size = Vector2i(640, 640)
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+filters = PackedStringArray("sidequest.sillybird,sbsidequest.exe")
+
+[node name="AcceptDialog" type="AcceptDialog" parent="." unique_id=1564303955]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "error"
+initial_position = 2
+size = Vector2i(182, 100)
+dialog_text = "error_bad_project_dir"
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/Project" to="ProjectDirectorySelection" method="show"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/Sidequest" to="SidequestSelection" method="show"]
 [connection signal="dir_selected" from="ProjectDirectorySelection" to="." method="_on_project_directory_selection_dir_selected"]
+[connection signal="file_selected" from="SidequestSelection" to="." method="_on_sidequest_selection_file_selected"]
